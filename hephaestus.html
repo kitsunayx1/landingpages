@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Turn Sigma rules into executable Atomic Red Team tests. Translate to all 5 SIEM languages. For authorized security testing only.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Hephaestus — Detection Engineering Forge">
+  <meta property="og:description" content="Turn Sigma rules into executable Atomic Red Team tests. Translate to all 5 SIEM languages. For authorized security testing only.">
+  <meta property="og:image" content="https://gil.consulting/og/hephaestus.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Hephaestus — Detection Engineering Forge">
+  <meta name="twitter:description" content="Turn Sigma rules into executable Atomic Red Team tests. Translate to all 5 SIEM languages. For authorized security testing only.">
+  <meta name="twitter:image" content="https://gil.consulting/og/hephaestus.png">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⬡</text></svg>">
+<title>Hephaestus — Detection Engineering Forge</title>
+<meta name="description" content="macOS-native red-team workstation. Paste Sigma YAML or Splunk SPL — Claude AI generates Atomic Red Team tests and translates to all 5 SIEM languages. For authorized security testing only.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:         #050305;
+    --surface:    #0c0a10;
+    --surface2:   #131018;
+    --orange:     #f97316;
+    --orange-dim: rgba(249,115,22,0.15);
+    --orange-glow:rgba(249,115,22,0.06);
+    --red:        #dc2626;
+    --red-dim:    rgba(220,38,38,0.12);
+    --text:       rgba(255,255,255,0.92);
+    --muted:      rgba(255,255,255,0.50);
+    --faint:      rgba(255,255,255,0.08);
+    --border:     rgba(255,255,255,0.07);
+    --border-orange: rgba(249,115,22,0.25);
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── EMBER BACKGROUND ─────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 600px 400px at 10% 80%, rgba(249,115,22,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 400px 300px at 90% 20%, rgba(220,38,38,0.05) 0%, transparent 70%),
+      radial-gradient(ellipse 300px 200px at 50% 50%, rgba(249,115,22,0.03) 0%, transparent 70%),
+      radial-gradient(ellipse 200px 150px at 70% 70%, rgba(220,38,38,0.04) 0%, transparent 70%),
+      radial-gradient(ellipse 150px 100px at 25% 30%, rgba(249,115,22,0.04) 0%, transparent 70%);
+  }
+
+  /* ── NAV ──────────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px;
+    background: rgba(5,3,5,0.82);
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-brand {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .nav-brand span { color: var(--orange); }
+  .nav-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--orange);
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.01em;
+    padding: 9px 22px;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .nav-cta:hover { background: #ea6a0a; transform: translateY(-1px); }
+
+  /* ── SECTIONS BASE ────────────────────────────── */
+  section { position: relative; z-index: 1; }
+
+  /* ── HERO ─────────────────────────────────────── */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 120px 48px 80px;
+    text-align: center;
+  }
+  .hero-inner { max-width: 900px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'Fira Code', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--orange);
+    background: var(--orange-dim);
+    border: 1px solid var(--border-orange);
+    padding: 6px 16px;
+    border-radius: 999px;
+    margin-bottom: 32px;
+  }
+  .hero-h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(52px, 8vw, 96px);
+    line-height: 1.0;
+    letter-spacing: -0.04em;
+    margin-bottom: 28px;
+    color: var(--text);
+  }
+  .hero-h1 .accent { color: var(--orange); }
+  .hero-sub {
+    font-size: clamp(17px, 2.2vw, 21px);
+    font-weight: 400;
+    color: rgba(255,255,255,0.70);
+    line-height: 1.55;
+    max-width: 680px;
+    margin: 0 auto 20px;
+  }
+  .hero-desc {
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 580px;
+    margin: 0 auto 16px;
+  }
+  .auth-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(220,38,38,0.15);
+    border: 1px solid rgba(220,38,38,0.35);
+    color: #f87171;
+    font-family: 'Fira Code', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 36px;
+  }
+  .hero-ctas {
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 72px;
+  }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--orange);
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 14px 32px;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 0 24px rgba(249,115,22,0.25);
+  }
+  .btn-primary:hover { background: #ea6a0a; transform: translateY(-2px); box-shadow: 0 0 36px rgba(249,115,22,0.35); }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: transparent;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 13px 30px;
+    border-radius: 999px;
+    border: 1px solid var(--border-orange);
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+  }
+  .btn-secondary:hover { border-color: var(--orange); background: var(--orange-dim); transform: translateY(-2px); }
+
+  /* ── STAT STRIP ───────────────────────────────── */
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 1px solid var(--border-orange);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .stat-item {
+    padding: 28px 20px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-val {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 36px;
+    color: var(--orange);
+    letter-spacing: -0.04em;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-family: 'Fira Code', monospace;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ── WHY SECTION ──────────────────────────────── */
+  #why {
+    padding: 120px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .section-eyebrow {
+    font-family: 'Fira Code', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(32px, 4vw, 52px);
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-bottom: 60px;
+    max-width: 600px;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+  .why-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px;
+    transition: border-color 0.25s, transform 0.2s;
+  }
+  .why-card:hover { border-color: var(--border-orange); transform: translateY(-3px); }
+  .card-num {
+    font-family: 'Fira Code', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--orange);
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+  .card-body {
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ── FEATURES ─────────────────────────────────── */
+  #features {
+    padding: 0 48px 120px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    transition: border-color 0.25s, transform 0.2s;
+  }
+  .feature-card:hover { border-color: var(--border-orange); transform: translateY(-3px); }
+  .feature-icon {
+    font-size: 28px;
+    margin-bottom: 16px;
+    display: block;
+    line-height: 1;
+  }
+  .feature-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .feature-desc {
+    font-family: 'Fira Code', monospace;
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ── WARNING CALLOUT ──────────────────────────── */
+  .warning-callout {
+    margin: 0 48px 80px;
+    max-width: 1104px;
+    margin-left: auto;
+    margin-right: auto;
+    background: rgba(220,38,38,0.07);
+    border: 1px solid rgba(220,38,38,0.35);
+    border-left: 4px solid var(--red);
+    border-radius: 12px;
+    padding: 32px 40px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .warning-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .warning-text h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: #f87171;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .warning-text p {
+    font-family: 'Fira Code', monospace;
+    font-size: 12px;
+    font-weight: 300;
+    color: rgba(248,113,113,0.75);
+    line-height: 1.7;
+  }
+
+  /* ── BETA SECTION ─────────────────────────────── */
+  #beta {
+    padding: 100px 48px;
+    text-align: center;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .beta-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(32px, 4.5vw, 56px);
+    letter-spacing: -0.04em;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .beta-sub {
+    font-size: 17px;
+    color: var(--muted);
+    line-height: 1.55;
+    max-width: 520px;
+    margin: 0 auto 44px;
+  }
+  .signup-form {
+    display: flex;
+    gap: 12px;
+    max-width: 520px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .signup-form input[type="email"] {
+    flex: 1;
+    min-width: 260px;
+    background: var(--bg);
+    border: 1px solid var(--border-orange);
+    border-radius: 999px;
+    padding: 14px 24px;
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .signup-form input[type="email"]:focus { border-color: var(--orange); }
+  .signup-form input[type="email"]::placeholder { color: var(--muted); }
+  .signup-form button {
+    background: var(--orange);
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 14px 28px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    white-space: nowrap;
+  }
+  .signup-form button:hover { background: #ea6a0a; transform: translateY(-1px); }
+
+  /* ── FOOTER ───────────────────────────────────── */
+  footer {
+    padding: 40px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .footer-brand {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .footer-brand span { color: var(--orange); }
+  .footer-meta {
+    font-family: 'Fira Code', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    text-align: right;
+  }
+  .footer-meta a { color: var(--muted); text-decoration: none; }
+  .footer-meta a:hover { color: var(--orange); }
+
+  /* ── ANIMATIONS ───────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero-inner > * {
+    animation: fadeUp 0.7s ease forwards;
+    opacity: 0;
+  }
+  .hero-inner > *:nth-child(1) { animation-delay: 0.05s; }
+  .hero-inner > *:nth-child(2) { animation-delay: 0.15s; }
+  .hero-inner > *:nth-child(3) { animation-delay: 0.25s; }
+  .hero-inner > *:nth-child(4) { animation-delay: 0.32s; }
+  .hero-inner > *:nth-child(5) { animation-delay: 0.40s; }
+  .hero-inner > *:nth-child(6) { animation-delay: 0.50s; }
+
+  /* ── RESPONSIVE ───────────────────────────────── */
+  @media (max-width: 768px) {
+    nav { padding: 0 24px; }
+    #hero { padding: 100px 24px 60px; }
+    .hero-h1 { font-size: 48px; }
+    .stat-strip { grid-template-columns: repeat(2, 1fr); }
+    .stat-item:nth-child(2) { border-right: none; }
+    .stat-item:nth-child(3) { border-top: 1px solid var(--border); }
+    .stat-item:nth-child(4) { border-top: 1px solid var(--border); border-right: none; }
+    #why, #features { padding: 80px 24px; }
+    .card-grid { grid-template-columns: 1fr; }
+    .feature-grid { grid-template-columns: 1fr; }
+    .warning-callout { margin: 0 24px 60px; flex-direction: column; }
+    #beta { padding: 80px 24px; }
+    footer { padding: 32px 24px; flex-direction: column; text-align: center; }
+    .footer-meta { text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="#"><span>⚒</span> Hephaestus</a>
+  <a class="nav-cta" href="#beta">Join Beta</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Detection Engineering Forge · macOS</div>
+    <h1 class="hero-h1">Turn detections<br>into <span class="accent">attacks.</span></h1>
+    <p class="hero-sub">Sigma rules describe detectable behavior — which means they describe the attack. Hephaestus automates that inversion.</p>
+    <p class="hero-desc">macOS-native red-team engineering workstation. Paste Sigma YAML or Splunk SPL detection rules → Claude AI generates executable Atomic Red Team tests and translates to all 5 SIEM query languages. Combat Theater engine runs 12 MITRE ATT&amp;CK techniques locally.</p>
+    <div class="auth-badge">⚠ For authorized security testing only</div>
+    <div class="hero-ctas">
+      <a class="btn-primary" href="#beta">Request Beta Access</a>
+      <a class="btn-secondary" href="#features">See Features</a>
+    </div>
+    <div class="stat-strip">
+      <div class="stat-item">
+        <span class="stat-val">5</span>
+        <span class="stat-label">SIEM Languages</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-val">12</span>
+        <span class="stat-label">ATT&amp;CK Techniques</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-val">3</span>
+        <span class="stat-label">Export Formats</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-val">Claude</span>
+        <span class="stat-label">Powered</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why">
+  <div class="section-eyebrow">// Why we built this</div>
+  <h2 class="section-title">Detection rules are attack specs in disguise.</h2>
+  <div class="card-grid">
+    <div class="why-card">
+      <span class="card-num">01</span>
+      <div class="card-title">Detection rules are attack specs</div>
+      <p class="card-body">A Sigma rule that detects lateral movement also specifies exactly how to perform lateral movement. Hephaestus reads the rule, writes the test. The inversion is automatic — and it's always been sitting right there in the YAML.</p>
+    </div>
+    <div class="why-card">
+      <span class="card-num">02</span>
+      <div class="card-title">All five SIEM languages at once</div>
+      <p class="card-body">Every generated test includes translations to Sigma, Splunk SPL, KQL, Cortex XSIAM XQL, and CrowdStrike Falcon LogScale. Stop manually porting queries across platforms. One rule, five dialects, zero manual labor.</p>
+    </div>
+    <div class="why-card">
+      <span class="card-num">03</span>
+      <div class="card-title">Script pack builder</div>
+      <p class="card-body">Bundle up to 10 tests into a deployable ZIP with runner.sh, cleanup.sh, and README. Drop-in runnable on macOS or Linux. Hand it to your red team and walk away — everything they need is already in the archive.</p>
+    </div>
+    <div class="why-card">
+      <span class="card-num">04</span>
+      <div class="card-title">Your API key, your data</div>
+      <p class="card-body">Hephaestus uses Anthropic Claude via your own API key. No GIL intermediary, no usage tracking, no data retention. Your detection rules and generated tests never touch our servers. Keep your OpSec clean.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-eyebrow">// Capabilities</div>
+  <h2 class="section-title">Everything the detection-to-attack workflow demands.</h2>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <span class="feature-icon">⚒</span>
+      <div class="feature-title">Sigma → Atomic Test</div>
+      <p class="feature-desc">Paste any Sigma YAML or Splunk SPL rule and receive a fully formed Atomic Red Team test YAML with executor, dependencies, and cleanup commands generated by Claude AI.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🌐</span>
+      <div class="feature-title">5-SIEM Translation</div>
+      <p class="feature-desc">Every generated detection automatically renders in Sigma, Splunk SPL, Microsoft KQL, Cortex XSIAM XQL, and CrowdStrike Falcon LogScale. Copy any dialect instantly.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📦</span>
+      <div class="feature-title">Script Pack Builder</div>
+      <p class="feature-desc">Batch up to 10 tests into a runnable ZIP. Includes runner.sh, cleanup.sh, per-test README, and an index of all MITRE techniques covered. Ready to deploy on macOS or Linux.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🎯</span>
+      <div class="feature-title">Combat Theater</div>
+      <p class="feature-desc">Run 12 MITRE ATT&amp;CK techniques locally in a sandboxed environment directly from the app. Observe, log, and iterate without leaving your workstation.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🔄</span>
+      <div class="feature-title">Regeneration with Variation</div>
+      <p class="feature-desc">Regenerate any test with technique variation prompts — different executors, LOLBins, or obfuscation levels. Build a library of evasion variants from a single source rule.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">💾</span>
+      <div class="feature-title">Local-Only Operation</div>
+      <p class="feature-desc">All generated content, test history, and translation output is stored locally in a sandboxed app container. Nothing is synced, logged, or transmitted by Hephaestus itself.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WARNING CALLOUT -->
+<div class="warning-callout">
+  <div class="warning-icon">⚠️</div>
+  <div class="warning-text">
+    <h3>Authorized Use Only — Read Before Using</h3>
+    <p>Hephaestus is for authorized security testing on systems you own or have explicit written permission to test. Generating attack content and executing tests against unauthorized systems may violate the Computer Fraud and Abuse Act (18 U.S.C. § 1030), the CDAA, and equivalent laws in your jurisdiction. GIL accepts no liability for misuse. Beta access requires attestation of authorized use.</p>
+  </div>
+</div>
+
+<!-- BETA -->
+<section id="beta">
+  <h2 class="beta-title">Built for the red team.</h2>
+  <p class="beta-sub">Hephaestus is in active development. Beta access for security practitioners, red teamers, and detection engineers.</p>
+  <form class="signup-form" action="https://formsubmit.co/beta@gil.consulting" method="POST">
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="_subject" value="Beta Request — Hephaestus">
+    <input type="email" name="email" placeholder="your@email.com" required>
+    <button type="submit">Request Access</button>
+  </form>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand"><span>⚒</span> Hephaestus — Global Intelligence Laboratory</div>
+  <div class="footer-meta">
+    Veteran-Owned SDVOSB · <a href="https://gil.report" target="_blank">gil.report</a>
+  </div>
+</footer>
+
+</body>
+</html>

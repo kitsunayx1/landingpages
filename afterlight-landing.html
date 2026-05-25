@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Afterlight — Digital Estate & Legacy Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --stone-50: #fafaf9;
+    --stone-100: #f5f5f4;
+    --stone-200: #e7e5e4;
+    --stone-300: #d6d3d1;
+    --stone-400: #a8a29e;
+    --stone-500: #78716c;
+    --stone-600: #57534e;
+    --stone-700: #44403c;
+    --stone-800: #292524;
+    --stone-900: #1c1917;
+    --teal: #0d9488;
+    --teal-dark: #0f766e;
+    --teal-light: #ccfbf1;
+    --sage: #94a3b8;
+    --warm-white: #fefdfb;
+    --amber-soft: #fef3c7;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    color: var(--stone-800);
+    background: var(--warm-white);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── Grain overlay ── */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 1.25rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    background: rgba(254, 253, 251, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(214, 211, 209, 0.4);
+    transition: all 0.3s ease;
+  }
+
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    color: var(--stone-800);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-logo span { color: var(--teal); }
+
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a {
+    color: var(--stone-500);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .nav-links a:hover { color: var(--stone-800); }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    background: var(--teal);
+    color: white;
+    border: none;
+    padding: 0.85rem 2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:hover { background: var(--teal-dark); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(13, 148, 136, 0.25); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--stone-700);
+    border: 1.5px solid var(--stone-300);
+    padding: 0.85rem 2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .btn-outline:hover { border-color: var(--teal); color: var(--teal); }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 8rem 3rem 4rem;
+    position: relative;
+  }
+
+  .hero-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 5rem;
+    align-items: center;
+    width: 100%;
+  }
+
+  .hero-text { animation: fadeUp 1s ease both; }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    padding: 0.45rem 1rem;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+  }
+
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3.8rem;
+    line-height: 1.12;
+    color: var(--stone-900);
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.03em;
+  }
+
+  .hero p {
+    font-size: 1.2rem;
+    color: var(--stone-500);
+    max-width: 500px;
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+    line-height: 1.8;
+  }
+
+  .hero-actions { display: flex; gap: 1rem; align-items: center; }
+
+  .hero-visual {
+    animation: fadeUp 1s ease 0.3s both;
+    position: relative;
+  }
+
+  .hero-card {
+    background: white;
+    border: 1px solid var(--stone-200);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 60px rgba(28, 25, 23, 0.06), 0 1px 3px rgba(28, 25, 23, 0.04);
+    position: relative;
+  }
+
+  .hero-card::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px; right: -1px; bottom: -1px;
+    border-radius: 17px;
+    background: linear-gradient(135deg, var(--teal-light), transparent 50%);
+    z-index: -1;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--stone-100);
+  }
+
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.15rem;
+    color: var(--stone-800);
+  }
+
+  .card-status {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--teal);
+    background: var(--teal-light);
+    padding: 0.3rem 0.8rem;
+    border-radius: 100px;
+    letter-spacing: 0.04em;
+  }
+
+  .account-list { display: flex; flex-direction: column; gap: 0.9rem; }
+
+  .account-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--stone-50);
+    border-radius: 10px;
+    transition: all 0.2s;
+  }
+
+  .account-name {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--stone-700);
+  }
+
+  .account-tag {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+
+  .tag-claimed { background: var(--teal-light); color: var(--teal-dark); }
+  .tag-cancelled { background: var(--stone-100); color: var(--stone-500); }
+  .tag-pending { background: var(--amber-soft); color: #92400e; }
+  .tag-transferred { background: #dbeafe; color: #1e40af; }
+
+  .card-progress {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--stone-100);
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--stone-500);
+    margin-bottom: 0.6rem;
+    font-weight: 500;
+  }
+
+  .progress-bar {
+    height: 6px;
+    background: var(--stone-100);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 68%;
+    background: linear-gradient(90deg, var(--teal), #2dd4bf);
+    border-radius: 100px;
+    animation: progressGrow 2s ease 1s both;
+  }
+
+  /* ── Sections ── */
+  section { padding: 7rem 3rem; }
+
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--teal);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.6rem;
+    color: var(--stone-900);
+    margin-bottom: 1.2rem;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .section-subtitle {
+    font-size: 1.1rem;
+    color: var(--stone-500);
+    max-width: 580px;
+    font-weight: 300;
+    line-height: 1.8;
+  }
+
+  /* ── How It Works ── */
+  .how-section { background: var(--stone-50); }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+    margin-top: 4rem;
+  }
+
+  .step {
+    padding: 2.5rem 2rem;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid var(--stone-200);
+    transition: all 0.3s ease;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .step:nth-child(1) { animation-delay: 0.1s; }
+  .step:nth-child(2) { animation-delay: 0.2s; }
+  .step:nth-child(3) { animation-delay: 0.3s; }
+
+  .step:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(28, 25, 23, 0.06); }
+
+  .step-number {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+  }
+
+  .step h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    color: var(--stone-800);
+    margin-bottom: 0.75rem;
+  }
+
+  .step p {
+    font-size: 0.95rem;
+    color: var(--stone-500);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* ── For Who ── */
+  .paths-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    margin-top: 4rem;
+  }
+
+  .path-card {
+    padding: 3rem;
+    border-radius: 16px;
+    border: 1px solid var(--stone-200);
+    transition: all 0.3s ease;
+  }
+
+  .path-card:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(28, 25, 23, 0.06); }
+
+  .path-card.living {
+    background: white;
+  }
+
+  .path-card.bereaved {
+    background: linear-gradient(135deg, var(--stone-50), white);
+  }
+
+  .path-icon {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+
+  .path-card h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    color: var(--stone-800);
+    margin-bottom: 0.5rem;
+  }
+
+  .path-card .price {
+    font-size: 0.85rem;
+    color: var(--teal);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .path-card ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .path-card li {
+    font-size: 0.92rem;
+    color: var(--stone-600);
+    padding-left: 1.4rem;
+    position: relative;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  .path-card li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55rem;
+    width: 6px;
+    height: 6px;
+    background: var(--teal);
+    border-radius: 50%;
+  }
+
+  /* ── Trust ── */
+  .trust-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 4rem;
+  }
+
+  .trust-item {
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .trust-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .trust-item h4 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    color: var(--stone-800);
+    margin-bottom: 0.5rem;
+  }
+
+  .trust-item p {
+    font-size: 0.88rem;
+    color: var(--stone-500);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* ── Waitlist CTA ── */
+  .cta-section {
+    background: var(--stone-900);
+    border-radius: 0;
+    text-align: center;
+    padding: 6rem 3rem;
+  }
+
+  .cta-section .section-label { color: var(--teal); }
+
+  .cta-section .section-title {
+    color: white;
+    max-width: 600px;
+    margin: 0 auto 1rem;
+  }
+
+  .cta-section .section-subtitle {
+    color: var(--stone-400);
+    margin: 0 auto 3rem;
+    text-align: center;
+  }
+
+  .waitlist-form {
+    display: flex;
+    gap: 0.75rem;
+    max-width: 480px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .waitlist-form input {
+    flex: 1;
+    padding: 1rem 1.25rem;
+    border: 1.5px solid var(--stone-700);
+    background: var(--stone-800);
+    color: white;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+  }
+
+  .waitlist-form input::placeholder { color: var(--stone-500); }
+  .waitlist-form input:focus { outline: none; border-color: var(--teal); }
+
+  .waitlist-form .btn-primary {
+    white-space: nowrap;
+    padding: 1rem 2rem;
+  }
+
+  .waitlist-note {
+    font-size: 0.78rem;
+    color: var(--stone-500);
+    margin-top: 1rem;
+    font-weight: 300;
+  }
+
+  .success-msg {
+    display: none;
+    color: var(--teal);
+    font-size: 1rem;
+    font-weight: 500;
+    margin-top: 1rem;
+  }
+
+  /* ── Footer ── */
+  footer {
+    padding: 3rem;
+    text-align: center;
+    color: var(--stone-400);
+    font-size: 0.82rem;
+    font-weight: 300;
+    background: var(--stone-900);
+    border-top: 1px solid var(--stone-800);
+  }
+
+  footer a { color: var(--teal); text-decoration: none; }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes progressGrow {
+    from { width: 0; }
+    to { width: 68%; }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links a:not(:last-child) { display: none; }
+    .hero { padding: 7rem 1.5rem 3rem; }
+    .hero-content { grid-template-columns: 1fr; gap: 3rem; }
+    .hero h1 { font-size: 2.6rem; }
+    .steps-grid { grid-template-columns: 1fr; }
+    .paths-grid { grid-template-columns: 1fr; }
+    .trust-grid { grid-template-columns: 1fr; }
+    section { padding: 4rem 1.5rem; }
+    .waitlist-form { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a href="#" class="nav-logo">after<span>light</span></a>
+  <div class="nav-links">
+    <a href="#how">How It Works</a>
+    <a href="#who">Who It's For</a>
+    <a href="#trust">Trust</a>
+    <a href="#waitlist"><button class="btn-primary" style="padding: 0.6rem 1.5rem; font-size: 0.85rem;">Join Waitlist</button></a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-text">
+      <div class="hero-badge">
+        <span>◆</span> Coming Soon
+      </div>
+      <h1>Don't leave your family guessing.</h1>
+      <p>Afterlight discovers every account you have, stores your wishes, and guides your loved ones through everything when the time comes. Plan ahead or get help now.</p>
+      <div class="hero-actions">
+        <a href="#waitlist"><button class="btn-primary">Join the Waitlist</button></a>
+        <a href="#how"><button class="btn-outline">Learn More</button></a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card">
+        <div class="card-header">
+          <div class="card-title">Estate Progress</div>
+          <div class="card-status">17 of 25 resolved</div>
+        </div>
+        <div class="account-list">
+          <div class="account-item">
+            <span class="account-name">Chase Checking ····4821</span>
+            <span class="account-tag tag-claimed">Claimed</span>
+          </div>
+          <div class="account-item">
+            <span class="account-name">Netflix Subscription</span>
+            <span class="account-tag tag-cancelled">Cancelled</span>
+          </div>
+          <div class="account-item">
+            <span class="account-name">Fidelity 401(k)</span>
+            <span class="account-tag tag-transferred">Transferred</span>
+          </div>
+          <div class="account-item">
+            <span class="account-name">Adobe Creative Cloud</span>
+            <span class="account-tag tag-pending">Pending</span>
+          </div>
+          <div class="account-item">
+            <span class="account-name">Verizon Wireless</span>
+            <span class="account-tag tag-cancelled">Cancelled</span>
+          </div>
+        </div>
+        <div class="card-progress">
+          <div class="progress-label">
+            <span>Overall progress</span>
+            <span>68%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="how-section" id="how">
+  <div class="section-inner">
+    <div class="section-label">How It Works</div>
+    <div class="section-title">Simple when it matters most</div>
+    <div class="section-subtitle">No manual data entry. No guessing. Afterlight finds what you have and tells your family exactly what to do.</div>
+
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Scan your devices</h3>
+        <p>Our desktop scanner reads your saved passwords, email receipts, and browser history to build a complete inventory of every account you have. Everything stays local on your machine.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>Add your wishes</h3>
+        <p>Review what we found, assign beneficiaries, and leave instructions. Tell your family who to contact, what to claim, and what to cancel. All encrypted, only accessible by who you choose.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Your family is guided</h3>
+        <p>When the time comes, your designated person receives a prioritized checklist with vendor-specific closure instructions, contact numbers, and required documents for every account.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Who It's For -->
+<section id="who">
+  <div class="section-inner">
+    <div class="section-label">Two Paths</div>
+    <div class="section-title">Plan ahead. Or get help now.</div>
+    <div class="section-subtitle">Whether you're preparing for the future or navigating loss today, Afterlight meets you where you are.</div>
+
+    <div class="paths-grid">
+      <div class="path-card living">
+        <span class="path-icon">◈</span>
+        <h3>For the Living</h3>
+        <div class="price">$7.99/month — keep your estate current</div>
+        <ul>
+          <li>Periodic scanner keeps your account inventory up to date</li>
+          <li>Encrypted vault with beneficiary designations</li>
+          <li>Check-in system notifies your person if you go silent</li>
+          <li>Custom instructions per account, per beneficiary</li>
+          <li>Family plan available — cover everyone you love</li>
+        </ul>
+      </div>
+      <div class="path-card bereaved">
+        <span class="path-icon">◇</span>
+        <h3>For Those Left Behind</h3>
+        <div class="price">$59.99 one-time — no subscription, no recurring charge</div>
+        <ul>
+          <li>Desktop scanner discovers all their accounts automatically</li>
+          <li>Vendor-specific closure instructions for each account</li>
+          <li>Prioritized checklist — claim money first, cancel charges second</li>
+          <li>Bereavement contact info for 200+ companies</li>
+          <li>Free universal checklist available even without scanner</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Trust -->
+<section class="how-section" id="trust">
+  <div class="section-inner">
+    <div class="section-label">Trust & Privacy</div>
+    <div class="section-title">Your data never leaves your machine</div>
+    <div class="section-subtitle">We're asking you to trust us with the most sensitive information in someone's life. Here's how we earn that trust.</div>
+
+    <div class="trust-grid">
+      <div class="trust-item">
+        <div class="trust-icon">⬡</div>
+        <h4>Fully Local Scanner</h4>
+        <p>The scanner runs entirely on your device. No account data is ever uploaded to our servers or anywhere else. Air-gap capable.</p>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">⬢</div>
+        <h4>End-to-End Encrypted</h4>
+        <p>Your vault is encrypted with your key before it touches our servers. We cannot read your estate data. Zero-knowledge architecture.</p>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">◈</div>
+        <h4>Open Source Scanner</h4>
+        <p>The scanner modules are open source on GitHub. Anyone can audit exactly what it reads and verify it does nothing else.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA / Waitlist -->
+<section class="cta-section" id="waitlist">
+  <div class="section-inner">
+    <div class="section-label">Early Access</div>
+    <div class="section-title">Be the first to know when Afterlight launches</div>
+    <div class="section-subtitle">Join the waitlist. We'll only email you once — when it's ready.</div>
+
+    <div class="waitlist-form" id="waitlistForm">
+      <input type="email" id="emailInput" placeholder="Your email address" required />
+      <button class="btn-primary" onclick="handleSignup()">Join Waitlist</button>
+    </div>
+    <div class="waitlist-note">No spam. No selling your email. One notification when we launch.</div>
+    <div class="success-msg" id="successMsg">✓ You're on the list. We'll be in touch.</div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>Afterlight is a product of [Your LLC] &nbsp;·&nbsp; <a href="#">Privacy Policy</a> &nbsp;·&nbsp; <a href="#">Terms</a></p>
+  <p style="margin-top: 0.5rem; color: #57534e;">Built with care for the hardest days.</p>
+</footer>
+
+<script>
+function handleSignup() {
+  const email = document.getElementById('emailInput').value;
+  if (email && email.includes('@')) {
+    document.getElementById('waitlistForm').style.display = 'none';
+    document.querySelector('.waitlist-note').style.display = 'none';
+    document.getElementById('successMsg').style.display = 'block';
+    // In production: POST to your API endpoint
+    console.log('Waitlist signup:', email);
+  }
+}
+
+document.getElementById('emailInput').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') handleSignup();
+});
+
+// Intersection Observer for scroll animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.step, .path-card, .trust-item').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'all 0.6s ease';
+  observer.observe(el);
+});
+</script>
+
+</body>
+</html>

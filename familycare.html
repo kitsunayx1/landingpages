@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Shared calendars, medication tracking, care notes, and document storage for families coordinating care for loved ones.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="FamilyCare — Care Coordination for Families">
+  <meta property="og:description" content="Shared calendars, medication tracking, care notes, and document storage for families coordinating care for loved ones.">
+  <meta property="og:image" content="https://gil.consulting/og/familycare.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="FamilyCare — Care Coordination for Families">
+  <meta name="twitter:description" content="Shared calendars, medication tracking, care notes, and document storage for families coordinating care for loved ones.">
+  <meta name="twitter:image" content="https://gil.consulting/og/familycare.png">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⬡</text></svg>">
+  <title>FamilyCare — Care coordination for the families doing it all.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #fffbf7;
+      --surface: #fff8f2;
+      --surface2: #fef3e8;
+      --border: rgba(15,148,136,0.12);
+      --border-warm: rgba(244,63,94,0.1);
+      --text: #1c1917;
+      --text-mid: #44403c;
+      --muted: #78716c;
+      --muted-light: #a8a29e;
+      --accent: #0d9488;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --accent-dim: rgba(13,148,136,0.08);
+      --accent-glow: rgba(13,148,136,0.2);
+      --rose-dim: rgba(244,63,94,0.08);
+      --font-head: 'DM Sans', sans-serif;
+      --font-body: 'Nunito', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Warm dot grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(244,63,94,0.07) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      height: 64px;
+      background: rgba(255,251,247,0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(15,148,136,0.1);
+      box-shadow: 0 1px 16px rgba(28,25,23,0.05);
+    }
+
+    .nav-brand {
+      font-family: var(--font-head);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .nav-brand-heart {
+      color: var(--rose);
+      font-size: 1rem;
+    }
+
+    .nav-beta {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.45rem 1.25rem;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--font-head);
+      font-size: 0.84rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .nav-beta:hover {
+      background: #0f766e;
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 7rem 2rem 4rem;
+      text-align: center;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 55% at 50% 40%, rgba(13,148,136,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1.1rem;
+      border-radius: 999px;
+      background: var(--rose-dim);
+      border: 1px solid var(--border-warm);
+      font-family: var(--font-head);
+      font-size: 0.74rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--rose);
+      text-transform: uppercase;
+      margin-bottom: 1.75rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.1s;
+    }
+
+    .hero h1 {
+      font-family: var(--font-head);
+      font-size: clamp(2.6rem, 7vw, 5rem);
+      font-weight: 700;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.25s;
+    }
+
+    .hero h1 .accent { color: var(--accent); }
+
+    .hero-sub {
+      font-family: var(--font-head);
+      font-size: clamp(1rem, 2.3vw, 1.2rem);
+      font-weight: 500;
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto 0.75rem;
+      line-height: 1.65;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.4s;
+    }
+
+    .hero-body {
+      font-size: 0.97rem;
+      color: var(--muted-light);
+      max-width: 500px;
+      margin: 0 auto 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.52s;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 3.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.64s;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.85rem 2.1rem;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--font-head);
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: #0f766e;
+      box-shadow: 0 8px 28px var(--accent-glow);
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.85rem 2.1rem;
+      border-radius: 10px;
+      border: 1.5px solid rgba(28,25,23,0.15);
+      color: var(--muted);
+      font-family: var(--font-head);
+      font-size: 0.95rem;
+      font-weight: 500;
+      text-decoration: none;
+      background: #fff;
+      transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 4px 16px rgba(13,148,136,0.1);
+    }
+
+    .stat-strip {
+      display: flex;
+      gap: 0;
+      justify-content: center;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1.5px solid rgba(13,148,136,0.12);
+      box-shadow: 0 4px 24px rgba(28,25,23,0.06);
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.78s;
+    }
+
+    .stat-item {
+      padding: 1.1rem 2.25rem;
+      text-align: center;
+      border-right: 1.5px solid rgba(13,148,136,0.1);
+      background: #fff;
+    }
+
+    .stat-item:last-child { border-right: none; }
+
+    .stat-value {
+      font-family: var(--font-head);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent);
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      color: var(--muted-light);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    /* ── SECTIONS ── */
+    section { position: relative; z-index: 1; }
+
+    .section-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 5.5rem 2rem;
+    }
+
+    .section-eyebrow {
+      font-family: var(--font-head);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-family: var(--font-head);
+      font-size: clamp(1.7rem, 4vw, 2.6rem);
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .section-lead {
+      font-size: 1.02rem;
+      color: var(--muted);
+      max-width: 580px;
+      margin-bottom: 3rem;
+      line-height: 1.7;
+    }
+
+    /* ── WHY CARDS ── */
+    .why-section { background: var(--surface); }
+
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    .why-card {
+      background: #fff;
+      border: 1.5px solid rgba(13,148,136,0.1);
+      border-radius: 14px;
+      padding: 2.25rem;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .why-card:hover {
+      box-shadow: 0 8px 36px rgba(28,25,23,0.08);
+      border-color: rgba(13,148,136,0.22);
+    }
+
+    .why-num {
+      font-family: var(--font-head);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.18em;
+      margin-bottom: 0.75rem;
+    }
+
+    .why-card h3 {
+      font-family: var(--font-head);
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.65rem;
+      line-height: 1.3;
+    }
+
+    .why-card p {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ── FEATURES ── */
+    .features-section { background: var(--bg); }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+
+    .feature-card {
+      padding: 1.85rem;
+      border: 1.5px solid rgba(28,25,23,0.07);
+      border-radius: 14px;
+      background: #fff;
+      transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+    }
+
+    .feature-card:hover {
+      box-shadow: 0 8px 28px rgba(28,25,23,0.07);
+      border-color: rgba(13,148,136,0.2);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .feature-card h3 {
+      font-family: var(--font-head);
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── BETA ── */
+    .beta-section {
+      background: linear-gradient(160deg, rgba(13,148,136,0.05) 0%, rgba(244,63,94,0.04) 100%);
+    }
+
+    .beta-inner {
+      max-width: 580px;
+      margin: 0 auto;
+      padding: 5.5rem 2rem;
+      text-align: center;
+    }
+
+    .beta-card {
+      background: #fff;
+      border: 1.5px solid rgba(13,148,136,0.12);
+      border-radius: 20px;
+      padding: 3rem 2.5rem;
+      box-shadow: 0 8px 40px rgba(28,25,23,0.07);
+    }
+
+    .beta-inner .section-eyebrow { display: block; margin-bottom: 0.75rem; }
+    .beta-inner .section-title { margin-bottom: 0.75rem; font-size: clamp(1.5rem, 3.5vw, 2.1rem); }
+    .beta-inner .section-lead { max-width: 100%; margin-bottom: 2rem; margin-left: auto; margin-right: auto; }
+
+    .beta-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .beta-form input[type="email"] {
+      width: 100%;
+      padding: 0.9rem 1.3rem;
+      background: var(--bg);
+      border: 1.5px solid rgba(28,25,23,0.12);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.97rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .beta-form input[type="email"]::placeholder { color: var(--muted-light); }
+
+    .beta-form input[type="email"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(13,148,136,0.12);
+    }
+
+    .beta-form button {
+      width: 100%;
+      padding: 0.9rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: var(--font-head);
+      font-size: 0.97rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .beta-form button:hover {
+      background: #0f766e;
+      box-shadow: 0 8px 24px var(--accent-glow);
+    }
+
+    .beta-note {
+      font-size: 0.82rem;
+      color: var(--muted-light);
+      margin-top: 1rem;
+    }
+
+    /* Trust badges */
+    .trust-badges {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .trust-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .trust-badge span { color: var(--accent); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1.5px solid rgba(28,25,23,0.08);
+      padding: 2.25rem;
+      text-align: center;
+      background: var(--surface);
+    }
+
+    footer p {
+      font-family: var(--font-head);
+      font-size: 0.8rem;
+      color: var(--muted-light);
+      line-height: 2;
+    }
+
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── ANIMATION ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .stat-strip { flex-wrap: wrap; border-radius: 10px; }
+      .stat-item { flex: 1 1 50%; border-right: none; border-bottom: 1.5px solid rgba(13,148,136,0.1); }
+      .stat-item:nth-child(odd) { border-right: 1.5px solid rgba(13,148,136,0.1); }
+      .why-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      nav { padding: 0 1.25rem; }
+      .section-inner { padding: 3.5rem 1.25rem; }
+      .beta-card { padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-brand" href="#">
+      <span class="nav-brand-heart">&#10084;</span>
+      FamilyCare
+    </a>
+    <a class="nav-beta" href="#beta">Join Beta</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow">Web + Mobile &middot; iOS &amp; Android &middot; Free to Start</div>
+    <h1>Care, coordinated.<br>Family, <span class="accent">connected.</span></h1>
+    <p class="hero-sub">One place for the tasks, notes, documents, and conversations that come with caring for the people you love.</p>
+    <p class="hero-body">Shared calendars, medication schedules, care notes, document storage, and multi-caregiver access — designed for the families who are actually doing the care work.</p>
+    <div class="hero-ctas">
+      <a href="#beta" class="btn-primary">Join the Waitlist</a>
+      <a href="#why" class="btn-ghost">How It Works</a>
+    </div>
+    <div class="stat-strip">
+      <div class="stat-item">
+        <span class="stat-value">Web + Mobile</span>
+        <span class="stat-label">Platform</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">Shared</span>
+        <span class="stat-label">Access</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">Secure</span>
+        <span class="stat-label">Storage</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">Free</span>
+        <span class="stat-label">to Start</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY WE BUILT THIS -->
+  <section id="why" class="why-section">
+    <div class="section-inner">
+      <div class="section-eyebrow">Why We Built This</div>
+      <h2 class="section-title">Because care is complicated — your tools shouldn't be.</h2>
+      <p class="section-lead">Managing care for a parent, a child with complex needs, or a family member in recovery involves more coordination than any text thread or shared note can hold.</p>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-num">01</div>
+          <h3>Care is a team sport</h3>
+          <p>Managing care for a parent or a child with complex needs involves multiple family members, caregivers, and providers. FamilyCare keeps everyone on the same page — without the group text chaos.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-num">02</div>
+          <h3>Everything in one place</h3>
+          <p>Medication schedules, care notes, upcoming appointments, shared documents, emergency contacts. No more searching through texts and emails when you need something fast.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-num">03</div>
+          <h3>Designed for non-technical users</h3>
+          <p>Large text, clear navigation, and simple workflows designed for the actual people doing the care work — not just the tech-savvy family member who set it up.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-num">04</div>
+          <h3>Privacy first</h3>
+          <p>Your family's health and care data is sensitive. FamilyCare takes data security seriously and never sells your information to third parties. Your family's story is yours.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" class="features-section">
+    <div class="section-inner">
+      <div class="section-eyebrow">Features</div>
+      <h2 class="section-title">Everything a caregiving family needs, finally together.</h2>
+      <p class="section-lead">From daily medication reminders to document storage for medical records — FamilyCare brings the full caregiving workflow into one accessible, shared space.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📅</div>
+          <h3>Shared Calendar</h3>
+          <p>A shared family calendar for appointments, care visits, medication pickups, and therapy sessions. Everyone sees the same schedule — no more double-bookings or missed visits.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💊</div>
+          <h3>Medication Tracker</h3>
+          <p>Track medications, dosages, schedules, and refill dates for every family member. Log when medications are given and get reminders before refills run out.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📝</div>
+          <h3>Care Notes</h3>
+          <p>A shared log for care observations, behavioral notes, and updates from providers. Every caregiver sees the same record — no information falls through the cracks.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📄</div>
+          <h3>Document Storage</h3>
+          <p>Store medical records, insurance cards, care plans, legal documents, and emergency contacts. Accessible to authorized family members from any device, any time.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">👥</div>
+          <h3>Multi-Caregiver Access</h3>
+          <p>Invite family members, professional caregivers, and care coordinators with role-based access. Everyone sees what they need — and nothing they shouldn't.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔔</div>
+          <h3>Task Reminders</h3>
+          <p>Assign care tasks with due dates and reminders. Know what's done, what's pending, and who's responsible — without another group text asking if anyone gave the medication.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BETA -->
+  <section id="beta" class="beta-section">
+    <div class="beta-inner">
+      <div class="beta-card">
+        <span class="section-eyebrow">Early Access Waitlist</span>
+        <h2 class="section-title">Caring for your family starts here.</h2>
+        <p class="section-lead">FamilyCare is coming soon. Join the waitlist to be among the first families to get access.</p>
+        <form class="beta-form" action="https://formsubmit.co/beta@gil.consulting" method="POST">
+          <input type="hidden" name="_captcha" value="false" />
+          <input type="hidden" name="_subject" value="Beta Request — FamilyCare" />
+          <input type="email" name="email" placeholder="yourname@example.com" required autocomplete="email" />
+          <button type="submit">Join the Waitlist — It's Free</button>
+        </form>
+        <p class="beta-note">No spam. We'll send one email when early access opens.</p>
+        <div class="trust-badges">
+          <div class="trust-badge"><span>&#10003;</span> No credit card</div>
+          <div class="trust-badge"><span>&#10003;</span> Free to start</div>
+          <div class="trust-badge"><span>&#10003;</span> Unsubscribe anytime</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>FamilyCare — Global Intelligence Laboratory</p>
+    <p>Veteran-Owned SDVOSB · <a href="https://gil.report">gil.report</a></p>
+  </footer>
+
+</body>
+</html>

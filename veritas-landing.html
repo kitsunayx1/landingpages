@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veritas — Healthcare Records & Disability Claim Prep for Veterans</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --olive-900: #1a1f16;
+    --olive-800: #2d331f;
+    --olive-700: #3d4528;
+    --olive-600: #4d5632;
+    --sand-50: #faf8f3;
+    --sand-100: #f3efe6;
+    --sand-200: #e8e1d3;
+    --sand-300: #d4cbb7;
+    --sand-400: #b8ad96;
+    --sand-500: #968a72;
+    --sand-600: #736851;
+    --navy: #1b2a4a;
+    --navy-light: #2d4270;
+    --navy-bright: #3b5998;
+    --gold: #c5930a;
+    --gold-light: #fdf6e3;
+    --gold-dark: #a07808;
+    --white: #FFFFFF;
+    --green: #2d6a4f;
+    --green-light: #d8f3dc;
+    --red-muted: #c0392b;
+    --blue-flag: #3C3B6E;
+    --red-flag: #B22234;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    color: var(--olive-900);
+    background: var(--sand-50);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* subtle texture */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.015'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 1rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    background: rgba(250, 248, 243, 0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--sand-200);
+  }
+
+  .nav-logo {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--navy);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+  }
+
+  .nav-logo span {
+    color: var(--gold);
+  }
+
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a {
+    color: var(--sand-500);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+    transition: color 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .nav-links a:hover { color: var(--olive-900); }
+
+  /* ── Buttons ── */
+  .btn-gold {
+    background: var(--gold);
+    color: var(--white);
+    border: none;
+    padding: 0.85rem 2rem;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.02em;
+  }
+  .btn-gold:hover { background: var(--gold-dark); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(197, 147, 10, 0.25); }
+
+  .btn-outline-navy {
+    background: transparent;
+    color: var(--navy);
+    border: 1.5px solid var(--navy);
+    padding: 0.85rem 2rem;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .btn-outline-navy:hover { background: var(--navy); color: var(--white); }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 7rem 3rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(180deg, var(--gold-light) 0%, var(--sand-50) 100%);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  /* Stars accent bar at top */
+  .hero-accent {
+    position: absolute;
+    top: 64px; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--navy) 33%, var(--gold) 33%, var(--gold) 66%, var(--navy) 66%);
+  }
+
+  .hero-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 5rem;
+    align-items: center;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-text { animation: fadeUp 0.8s ease both; }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--navy);
+    color: var(--sand-200);
+    padding: 0.45rem 1.1rem;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+
+  .hero-badge .star { color: var(--gold); }
+
+  .hero h1 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 3.4rem;
+    line-height: 1.12;
+    color: var(--olive-900);
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--gold-dark);
+  }
+
+  .hero > .hero-inner > .hero-text > p {
+    font-size: 1.15rem;
+    color: var(--sand-600);
+    max-width: 500px;
+    margin-bottom: 2rem;
+    font-weight: 400;
+    line-height: 1.8;
+  }
+
+  .hero-note {
+    font-size: 0.82rem;
+    color: var(--sand-500);
+    margin-bottom: 2.5rem;
+    font-weight: 500;
+    font-style: italic;
+  }
+
+  .hero-actions { display: flex; gap: 1rem; }
+
+  /* ── Records card ── */
+  .hero-visual { animation: fadeUp 0.8s ease 0.2s both; position: relative; z-index: 2; }
+
+  .records-card {
+    background: var(--white);
+    border: 1px solid var(--sand-200);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(26, 31, 22, 0.08);
+  }
+
+  .rc-header {
+    background: var(--navy);
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .rc-title {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1rem;
+    color: var(--sand-100);
+    font-weight: 600;
+  }
+
+  .rc-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--gold);
+    background: rgba(197, 147, 10, 0.15);
+    padding: 0.25rem 0.7rem;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .rc-body { padding: 1.5rem; }
+
+  .rc-section-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--sand-500);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+    margin-top: 1.2rem;
+  }
+
+  .rc-section-label:first-child { margin-top: 0; }
+
+  .rc-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.7rem 0.9rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    background: var(--sand-50);
+    border: 1px solid var(--sand-100);
+  }
+
+  .rc-item-left { display: flex; flex-direction: column; }
+
+  .rc-item-name {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--olive-900);
+  }
+
+  .rc-item-detail {
+    font-size: 0.75rem;
+    color: var(--sand-500);
+    margin-top: 0.15rem;
+  }
+
+  .rc-tag {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .tag-uploaded { background: var(--green-light); color: var(--green); }
+  .tag-linked { background: var(--gold-light); color: var(--gold-dark); }
+  .tag-pending { background: var(--sand-100); color: var(--sand-600); }
+
+  .rc-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--sand-100);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--sand-50);
+  }
+
+  .rc-footer span {
+    font-size: 0.8rem;
+    color: var(--sand-500);
+    font-weight: 500;
+  }
+
+  .rc-footer strong { color: var(--green); }
+
+  /* ── Sections ── */
+  section { padding: 6rem 3rem; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+
+  .section-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: 'Source Serif 4', serif;
+    font-size: 2.5rem;
+    color: var(--olive-900);
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  .section-subtitle {
+    font-size: 1.05rem;
+    color: var(--sand-600);
+    max-width: 560px;
+    font-weight: 400;
+    line-height: 1.8;
+  }
+
+  /* ── Features ── */
+  .features-section { background: var(--white); }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 3.5rem;
+  }
+
+  .feature-card {
+    padding: 2.5rem 2rem;
+    border: 1px solid var(--sand-200);
+    border-radius: 12px;
+    background: var(--sand-50);
+    transition: all 0.3s;
+  }
+
+  .feature-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(26, 31, 22, 0.06); border-color: var(--gold-light); }
+
+  .feature-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--gold-light);
+    color: var(--gold-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+
+  .feature-card h3 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1.15rem;
+    color: var(--olive-900);
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-card p {
+    font-size: 0.9rem;
+    color: var(--sand-600);
+    line-height: 1.7;
+  }
+
+  /* ── How Claims Work ── */
+  .claims-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-top: 3.5rem;
+  }
+
+  .claim-step {
+    text-align: center;
+    padding: 2rem 1.5rem;
+    background: var(--white);
+    border: 1px solid var(--sand-200);
+    border-radius: 12px;
+    position: relative;
+    transition: all 0.3s;
+  }
+
+  .claim-step:hover { border-color: var(--gold); }
+
+  .claim-num {
+    width: 36px;
+    height: 36px;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--navy);
+    color: var(--gold);
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    font-family: 'Source Serif 4', serif;
+  }
+
+  .claim-step h4 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1rem;
+    color: var(--olive-900);
+    margin-bottom: 0.4rem;
+  }
+
+  .claim-step p {
+    font-size: 0.83rem;
+    color: var(--sand-500);
+    line-height: 1.6;
+  }
+
+  /* ── Conditions tracker ── */
+  .conditions-section { background: var(--white); }
+
+  .conditions-demo {
+    margin-top: 3rem;
+    background: var(--sand-50);
+    border: 1px solid var(--sand-200);
+    border-radius: 14px;
+    padding: 2.5rem;
+    max-width: 800px;
+  }
+
+  .cd-title {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1.15rem;
+    color: var(--olive-900);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--sand-200);
+  }
+
+  .condition-row {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 0.8fr;
+    gap: 1rem;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--sand-100);
+    align-items: center;
+  }
+
+  .condition-row:last-child { border-bottom: none; }
+
+  .condition-row.header {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--sand-500);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--sand-200);
+    padding-bottom: 0.6rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .cr-name { font-weight: 600; font-size: 0.9rem; color: var(--olive-900); }
+  .cr-date { font-size: 0.82rem; color: var(--sand-500); }
+  .cr-docs { font-size: 0.82rem; color: var(--sand-500); }
+
+  .cr-strength {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .strength-strong { background: var(--green-light); color: var(--green); }
+  .strength-moderate { background: var(--gold-light); color: var(--gold-dark); }
+  .strength-weak { background: #fee2e2; color: var(--red-muted); }
+
+  /* ── CTA ── */
+  .cta-section {
+    background: var(--navy);
+    padding: 6rem 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: '★';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 30rem;
+    color: rgba(197, 147, 10, 0.03);
+    pointer-events: none;
+  }
+
+  .cta-section .section-eyebrow { color: var(--gold); }
+  .cta-section .section-title { color: var(--white); max-width: 600px; margin: 0 auto 1rem; }
+  .cta-section .section-subtitle { color: var(--sand-400); margin: 0 auto 3rem; text-align: center; }
+
+  .waitlist-form {
+    display: flex;
+    gap: 0.75rem;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .waitlist-form input {
+    flex: 1;
+    padding: 1rem 1.25rem;
+    border: 1.5px solid var(--olive-700);
+    background: var(--olive-800);
+    color: var(--sand-100);
+    border-radius: 8px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+  }
+
+  .waitlist-form input::placeholder { color: var(--sand-500); }
+  .waitlist-form input:focus { outline: none; border-color: var(--gold); }
+
+  .waitlist-note {
+    font-size: 0.78rem;
+    color: var(--sand-500);
+    margin-top: 1rem;
+  }
+
+  .waitlist-note strong { color: var(--gold); }
+
+  .success-msg {
+    display: none;
+    color: var(--gold);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+  }
+
+  /* ── Footer ── */
+  footer {
+    padding: 2.5rem 3rem;
+    text-align: center;
+    color: var(--sand-500);
+    font-size: 0.8rem;
+    background: var(--olive-900);
+  }
+
+  footer a { color: var(--gold); text-decoration: none; }
+
+  .footer-disclaimer {
+    max-width: 600px;
+    margin: 0.8rem auto 0;
+    font-size: 0.72rem;
+    color: var(--sand-500);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(25px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links a:not(:last-child) { display: none; }
+    .hero { padding: 7rem 1.5rem 3rem; }
+    .hero-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .hero h1 { font-size: 2.4rem; }
+    .features-grid { grid-template-columns: 1fr; }
+    .claims-grid { grid-template-columns: 1fr 1fr; }
+    .condition-row { grid-template-columns: 1fr 1fr; }
+    .condition-row.header { display: none; }
+    section { padding: 4rem 1.5rem; }
+    .waitlist-form { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero-accent"></div>
+
+<!-- Nav -->
+<nav>
+  <a href="#" class="nav-logo">VERIT<span>A</span>S</a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how">How It Works</a>
+    <a href="#tracker">Claim Tracker</a>
+    <a href="#waitlist"><button class="btn-gold" style="padding: 0.6rem 1.5rem; font-size: 0.85rem;">Join Waitlist</button></a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-badge">
+        <span class="star">★</span> Built for Veterans
+      </div>
+      <h1>Your service is documented. Your <em>claim</em> should be too.</h1>
+      <p>Veritas puts all your healthcare records, service history, and supporting evidence in one place — organized and ready for your disability benefits claim.</p>
+      <div class="hero-note">We don't file claims. We make sure you're prepared when you do.</div>
+      <div class="hero-actions">
+        <a href="#waitlist"><button class="btn-gold">Join the Waitlist</button></a>
+        <a href="#features"><button class="btn-outline-navy">See Features</button></a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="records-card">
+        <div class="rc-header">
+          <span class="rc-title">My Service Records</span>
+          <span class="rc-badge">12 Documents</span>
+        </div>
+        <div class="rc-body">
+          <div class="rc-section-label">Medical Records</div>
+          <div class="rc-item">
+            <div class="rc-item-left">
+              <span class="rc-item-name">VA Audiology Report</span>
+              <span class="rc-item-detail">Bilateral hearing loss — Camp Lejeune, 2019</span>
+            </div>
+            <span class="rc-tag tag-uploaded">Uploaded</span>
+          </div>
+          <div class="rc-item">
+            <div class="rc-item-left">
+              <span class="rc-item-name">MRI — Lumbar Spine</span>
+              <span class="rc-item-detail">Herniated disc L4-L5 — VA Medical Center</span>
+            </div>
+            <span class="rc-tag tag-uploaded">Uploaded</span>
+          </div>
+          <div class="rc-item">
+            <div class="rc-item-left">
+              <span class="rc-item-name">Buddy Statement — SGT Ramirez</span>
+              <span class="rc-item-detail">Witnessed injury during deployment</span>
+            </div>
+            <span class="rc-tag tag-linked">Linked</span>
+          </div>
+          <div class="rc-section-label">Service Records</div>
+          <div class="rc-item">
+            <div class="rc-item-left">
+              <span class="rc-item-name">DD-214</span>
+              <span class="rc-item-detail">Honorable Discharge — 2021</span>
+            </div>
+            <span class="rc-tag tag-uploaded">Uploaded</span>
+          </div>
+          <div class="rc-item">
+            <div class="rc-item-left">
+              <span class="rc-item-name">Service Treatment Records</span>
+              <span class="rc-item-detail">Requested from NPRC</span>
+            </div>
+            <span class="rc-tag tag-pending">Pending</span>
+          </div>
+        </div>
+        <div class="rc-footer">
+          <span>Claim readiness</span>
+          <span><strong>4 of 5 conditions documented</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features-section" id="features">
+  <div class="section-inner">
+    <div class="section-eyebrow">Features</div>
+    <div class="section-title">Everything your claim needs, organized</div>
+    <div class="section-subtitle">Stop digging through folders and filing cabinets. Veritas brings it all together and shows you what's missing.</div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">◈</div>
+        <h3>Record Vault</h3>
+        <p>Upload and organize all your medical records, service treatment records, DD-214, buddy statements, and nexus letters in one encrypted vault.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">◇</div>
+        <h3>Health Log</h3>
+        <p>Daily symptom tracking with date-stamped entries. Document flare-ups, pain levels, and how conditions affect your daily life. Creates a continuous evidence trail.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⬡</div>
+        <h3>Condition Tracker</h3>
+        <p>Track each claimed condition with linked evidence, service connection documentation, and claim strength assessment. See exactly what you have and what you still need.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">□</div>
+        <h3>Evidence Checklist</h3>
+        <p>Per-condition checklists showing required documents — diagnosis, nexus letter, buddy statements, service records. Know what's missing before you file.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">△</div>
+        <h3>Appointment Prep</h3>
+        <p>Before your C&P exam, Veritas surfaces your relevant records, symptom history, and talking points so you walk in prepared, not scrambling.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">○</div>
+        <h3>Export Package</h3>
+        <p>Generate an organized evidence package with table of contents, condition summaries, and linked documents. Hand it to your VSO or submit it yourself.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section id="how">
+  <div class="section-inner">
+    <div class="section-eyebrow">Process</div>
+    <div class="section-title">How Veritas helps you prepare</div>
+    <div class="section-subtitle">We organize and surface what matters. You bring the truth of your service.</div>
+
+    <div class="claims-grid">
+      <div class="claim-step">
+        <div class="claim-num">1</div>
+        <h4>Upload Records</h4>
+        <p>Add your DD-214, medical records, service treatment records, and any existing documentation.</p>
+      </div>
+      <div class="claim-step">
+        <div class="claim-num">2</div>
+        <h4>Add Conditions</h4>
+        <p>List conditions you're claiming. Veritas shows what evidence you need for each one.</p>
+      </div>
+      <div class="claim-step">
+        <div class="claim-num">3</div>
+        <h4>Track & Document</h4>
+        <p>Log symptoms daily. Link buddy statements and nexus letters. Fill the gaps.</p>
+      </div>
+      <div class="claim-step">
+        <div class="claim-num">4</div>
+        <h4>Export & File</h4>
+        <p>Generate your organized evidence package. Take it to your VSO or file yourself — fully prepared.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Condition Tracker Demo -->
+<section class="conditions-section" id="tracker">
+  <div class="section-inner">
+    <div class="section-eyebrow">Claim Strength</div>
+    <div class="section-title">Know where you stand before you file</div>
+    <div class="section-subtitle">Veritas assesses your evidence strength per condition so you can fill gaps before submitting.</div>
+
+    <div class="conditions-demo">
+      <div class="cd-title">Conditions & Evidence Strength</div>
+      <div class="condition-row header">
+        <span>Condition</span>
+        <span>First Documented</span>
+        <span>Evidence Count</span>
+        <span>Strength</span>
+      </div>
+      <div class="condition-row">
+        <span class="cr-name">Tinnitus (bilateral)</span>
+        <span class="cr-date">Mar 2019</span>
+        <span class="cr-docs">6 documents</span>
+        <span class="cr-strength strength-strong">Strong</span>
+      </div>
+      <div class="condition-row">
+        <span class="cr-name">Lumbar strain</span>
+        <span class="cr-date">Aug 2020</span>
+        <span class="cr-docs">4 documents</span>
+        <span class="cr-strength strength-strong">Strong</span>
+      </div>
+      <div class="condition-row">
+        <span class="cr-name">PTSD</span>
+        <span class="cr-date">Nov 2021</span>
+        <span class="cr-docs">3 documents</span>
+        <span class="cr-strength strength-moderate">Moderate</span>
+      </div>
+      <div class="condition-row">
+        <span class="cr-name">Sleep apnea</span>
+        <span class="cr-date">Jan 2023</span>
+        <span class="cr-docs">1 document</span>
+        <span class="cr-strength strength-weak">Needs Work</span>
+      </div>
+      <div class="condition-row">
+        <span class="cr-name">Knee — right, meniscus</span>
+        <span class="cr-date">Jun 2020</span>
+        <span class="cr-docs">5 documents</span>
+        <span class="cr-strength strength-strong">Strong</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="waitlist">
+  <div class="section-inner" style="position: relative; z-index: 2;">
+    <div class="section-eyebrow">Early Access</div>
+    <div class="section-title">You served. Let us help you prepare.</div>
+    <div class="section-subtitle">Join the waitlist. We'll notify you when Veritas is ready.</div>
+
+    <div class="waitlist-form" id="waitlistForm">
+      <input type="email" id="emailInput" placeholder="Your email address" required />
+      <button class="btn-gold" onclick="handleSignup()">Join Waitlist</button>
+    </div>
+    <div class="waitlist-note"><strong>Free for veterans.</strong> Always will be for the core features.</div>
+    <div class="success-msg" id="successMsg">★ You're on the list. Thank you for your service.</div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>Veritas is a product of [Your LLC] &nbsp;·&nbsp; <a href="#">Privacy Policy</a> &nbsp;·&nbsp; <a href="#">Terms</a></p>
+  <div class="footer-disclaimer">Veritas is not affiliated with the U.S. Department of Veterans Affairs. We do not file claims, provide legal advice, or act as a Veterans Service Organization. Veritas is an organizational tool that helps veterans prepare their own documentation.</div>
+</footer>
+
+<script>
+function handleSignup() {
+  const email = document.getElementById('emailInput').value;
+  if (email && email.includes('@')) {
+    document.getElementById('waitlistForm').style.display = 'none';
+    document.querySelector('.waitlist-note').style.display = 'none';
+    document.getElementById('successMsg').style.display = 'block';
+    console.log('Veritas signup:', email);
+  }
+}
+
+document.getElementById('emailInput').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') handleSignup();
+});
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.feature-card, .claim-step, .condition-row:not(.header)').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(15px)';
+  el.style.transition = 'all 0.5s ease';
+  observer.observe(el);
+});
+</script>
+
+</body>
+</html>

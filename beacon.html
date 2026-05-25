@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Watches your network, AI skill files, IoT devices, and CVE exposure. Local AI inference. Runs on Raspberry Pi or any Linux host.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="BEACON — AI-Native Home Network Security Monitor">
+  <meta property="og:description" content="Watches your network, AI skill files, IoT devices, and CVE exposure. Local AI inference. Runs on Raspberry Pi or any Linux host.">
+  <meta property="og:image" content="https://gil.consulting/og/beacon.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="BEACON — AI-Native Home Network Security Monitor">
+  <meta name="twitter:description" content="Watches your network, AI skill files, IoT devices, and CVE exposure. Local AI inference. Runs on Raspberry Pi or any Linux host.">
+  <meta name="twitter:image" content="https://gil.consulting/og/beacon.png">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⬡</text></svg>">
+  <title>BEACON — Your home network, under watch.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #020c04;
+      --surface: #050f07;
+      --surface2: #091409;
+      --border: rgba(34,197,94,0.1);
+      --border-light: rgba(34,197,94,0.07);
+      --text: #dcfce7;
+      --muted: #4b7a57;
+      --accent: #22c55e;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --accent-dim: rgba(34,197,94,0.08);
+      --accent-glow: rgba(34,197,94,0.25);
+      --font-mono: 'Space Mono', monospace;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── RADAR SWEEP ── */
+    .radar-bg {
+      position: fixed;
+      top: 50vh;
+      left: 50vw;
+      transform: translate(-50%, -50%);
+      width: min(90vw, 900px);
+      height: min(90vw, 900px);
+      border-radius: 50%;
+      background: conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        rgba(34,197,94,0.07) 20deg,
+        transparent 40deg
+      );
+      animation: radar-spin 6s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .radar-rings {
+      position: fixed;
+      top: 50vh;
+      left: 50vw;
+      transform: translate(-50%, -50%);
+      width: min(90vw, 900px);
+      height: min(90vw, 900px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .radar-rings::before,
+    .radar-rings::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(34,197,94,0.06);
+    }
+
+    .radar-rings::before {
+      inset: 10%;
+    }
+
+    .radar-rings::after {
+      inset: 25%;
+    }
+
+    @keyframes radar-spin {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to   { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      height: 62px;
+      background: rgba(2,12,4,0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .nav-brand {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: 0.15em;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .nav-ping {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      position: relative;
+    }
+
+    .nav-ping::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      border: 1px solid var(--accent);
+      animation: ping 2s ease-out infinite;
+    }
+
+    @keyframes ping {
+      0% { transform: scale(1); opacity: 0.8; }
+      100% { transform: scale(2.5); opacity: 0; }
+    }
+
+    .nav-beta {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.42rem 1.1rem;
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      background: var(--accent-dim);
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .nav-beta:hover {
+      background: rgba(34,197,94,0.16);
+      box-shadow: 0 0 14px var(--accent-glow);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 7rem 2rem 4rem;
+      text-align: center;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.1s;
+    }
+
+    .hero h1 {
+      font-family: var(--font-mono);
+      font-size: clamp(2.6rem, 7.5vw, 5.2rem);
+      font-weight: 700;
+      line-height: 1.12;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.25s;
+    }
+
+    .hero h1 .accent { color: var(--accent); }
+
+    .hero-sub {
+      font-family: var(--font-mono);
+      font-size: clamp(0.82rem, 1.9vw, 0.97rem);
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto 0.75rem;
+      line-height: 1.8;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.4s;
+    }
+
+    .hero-body {
+      font-size: 0.94rem;
+      color: rgba(220,252,231,0.4);
+      max-width: 480px;
+      margin: 0 auto 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.52s;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 3.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.64s;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.78rem 1.9rem;
+      border-radius: 4px;
+      background: var(--accent);
+      color: #020c04;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      font-weight: 700;
+      transition: box-shadow 0.2s, opacity 0.2s;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 0 24px var(--accent-glow);
+      opacity: 0.9;
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.78rem 1.9rem;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .stat-strip {
+      display: flex;
+      gap: 0;
+      justify-content: center;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.78s;
+    }
+
+    .stat-item {
+      padding: 1.05rem 2rem;
+      text-align: center;
+      border-right: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .stat-item:last-child { border-right: none; }
+
+    .stat-value {
+      font-family: var(--font-mono);
+      font-size: 1.2rem;
+      color: var(--accent);
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    /* ── SECTIONS ── */
+    section { position: relative; z-index: 1; }
+
+    .section-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 5.5rem 2rem;
+    }
+
+    .section-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.28em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-family: var(--font-mono);
+      font-size: clamp(1.6rem, 4vw, 2.5rem);
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .section-lead {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 580px;
+      margin-bottom: 3rem;
+      line-height: 1.7;
+    }
+
+    /* ── WHY CARDS ── */
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--border);
+    }
+
+    .why-card {
+      background: var(--surface);
+      padding: 2.25rem;
+      transition: background 0.2s;
+    }
+
+    .why-card:hover { background: var(--surface2); }
+
+    .why-num {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      margin-bottom: 0.75rem;
+    }
+
+    .why-card h3 {
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 0.65rem;
+      line-height: 1.3;
+    }
+
+    .why-card p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── FEATURES ── */
+    .features-section { background: var(--surface); }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+
+    .feature-card {
+      padding: 1.75rem;
+      border: 1px solid var(--border-light);
+      border-radius: 6px;
+      background: var(--bg);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(34,197,94,0.25);
+      box-shadow: 0 0 20px rgba(34,197,94,0.06);
+    }
+
+    .feature-icon {
+      font-size: 1.4rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .feature-card h3 {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.03em;
+    }
+
+    .feature-card p {
+      font-size: 0.86rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── BETA ── */
+    .beta-section { background: var(--bg); }
+
+    .beta-inner {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 5.5rem 2rem;
+      text-align: center;
+    }
+
+    .beta-inner .section-eyebrow { display: block; margin-bottom: 0.75rem; }
+    .beta-inner .section-title { margin-bottom: 0.75rem; }
+    .beta-inner .section-lead { max-width: 100%; margin-bottom: 2rem; }
+
+    .beta-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .beta-form input[type="email"] {
+      width: 100%;
+      padding: 0.88rem 1.2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .beta-form input[type="email"]::placeholder { color: var(--muted); }
+
+    .beta-form input[type="email"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(34,197,94,0.15);
+    }
+
+    .beta-form button {
+      width: 100%;
+      padding: 0.88rem;
+      background: var(--accent);
+      color: #020c04;
+      border: none;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      cursor: pointer;
+      transition: box-shadow 0.2s, opacity 0.2s;
+    }
+
+    .beta-form button:hover {
+      box-shadow: 0 0 20px var(--accent-glow);
+      opacity: 0.9;
+    }
+
+    .beta-note {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.75rem;
+      font-family: var(--font-mono);
+    }
+
+    /* ── STATUS BAR ── */
+    .status-bar {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .status-dot.green { background: var(--accent); }
+    .status-dot.amber { background: var(--amber); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.25rem;
+      text-align: center;
+      background: var(--surface);
+    }
+
+    footer p {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      line-height: 2;
+    }
+
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── ANIMATION ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .radar-bg, .radar-rings { display: none; }
+      .stat-strip { flex-wrap: wrap; }
+      .stat-item { flex: 1 1 50%; border-right: none; border-bottom: 1px solid var(--border); }
+      .stat-item:nth-child(odd) { border-right: 1px solid var(--border); }
+      .why-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      nav { padding: 0 1.25rem; }
+      .section-inner { padding: 3.5rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Radar background -->
+  <div class="radar-bg" aria-hidden="true"></div>
+  <div class="radar-rings" aria-hidden="true"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-brand" href="#">
+      <div class="nav-ping"></div>
+      BEACON
+    </a>
+    <a class="nav-beta" href="#beta">Join Beta</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow">Linux · Raspberry Pi 5 · Local AI · Mobile App</div>
+    <h1>Your network<br>has a<br><span class="accent">watchdog.</span></h1>
+    <p class="hero-sub">BEACON monitors your home or office network for anomalies, AI agent threats, and CVE exposure — entirely on your local hardware.</p>
+    <p class="hero-body">Runs on Raspberry Pi 5 or any Linux host. Builds behavioral baselines, watches DNS queries, inventories IoT devices, monitors AI skill files, and scans for CVE exposure. Companion mobile app for iOS and Android.</p>
+    <div class="hero-ctas">
+      <a href="#beta" class="btn-primary">Get Early Access</a>
+      <a href="#why" class="btn-ghost">How It Works</a>
+    </div>
+    <div class="stat-strip">
+      <div class="stat-item">
+        <span class="stat-value">Local AI</span>
+        <span class="stat-label">Inference</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">No Cloud</span>
+        <span class="stat-label">Required</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">RPi 5</span>
+        <span class="stat-label">Target</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">Mobile</span>
+        <span class="stat-label">App Included</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY WE BUILT THIS -->
+  <section id="why">
+    <div class="section-inner">
+      <div class="section-eyebrow">Why We Built This</div>
+      <h2 class="section-title">Network security that runs where your network is.</h2>
+      <p class="section-lead">Consumer routers don't tell you when your smart TV talks to a strange server at 3am. BEACON does. And it watches for threats that didn't exist last year.</p>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-num">01</div>
+          <h3>Runs on $35 hardware</h3>
+          <p>BEACON is designed for Raspberry Pi 5 or any spare Linux box. No monthly hardware subscription, no proprietary appliance. Plug it in and it starts watching.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-num">02</div>
+          <h3>Watches AI agents, not just humans</h3>
+          <p>BEACON monitors AI skill files (Claude, Continue, Cursor) for prompt injection, permission grabs, and hash tampering. New threat category, purpose-built detection.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-num">03</div>
+          <h3>Local AI inference</h3>
+          <p>The behavioral analysis engine runs entirely on-device. No traffic metadata leaves your network to a cloud API. Your network behavior is your data.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-num">04</div>
+          <h3>Privacy-auditable telemetry</h3>
+          <p>If you want cloud-enhanced threat intelligence, PASTA telemetry upload is opt-in and transparent. See exactly what's sent before it goes. Nothing silently phones home.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" class="features-section">
+    <div class="section-inner">
+      <div class="section-eyebrow">Detection Capabilities</div>
+      <h2 class="section-title">Six layers of visibility into your network.</h2>
+      <p class="section-lead">BEACON layers network behavior, device inventory, AI file monitoring, and vulnerability scanning into a single console — with mobile alerts when something needs your attention.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🌐</div>
+          <h3>Network Behavior Monitor</h3>
+          <p>Builds behavioral baselines for every device on your network. Alerts when a device makes unexpected connections, changes communication patterns, or beacons unexpectedly.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>AI Skill File Watcher</h3>
+          <p>Monitors AI agent configuration files (Claude, Continue, Cursor) for prompt injection attempts, unauthorized permission escalation, and hash tampering. New threat, new detection.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <h3>Mobile App (iOS + Android)</h3>
+          <p>Companion app delivers real-time alerts, device inventory, and threat summaries to your phone. No cloud relay — connects directly to your BEACON instance over your local network.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3>IoT Device Inventory</h3>
+          <p>Automatically discovers and classifies every device on your network — smart TVs, thermostats, cameras. Know what's connected before something else figures it out first.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🛡</div>
+          <h3>CVE Exposure Scanner</h3>
+          <p>Matches discovered devices and software against the NVD CVE database. Surfaces known vulnerabilities in your specific device models and firmware versions.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📡</div>
+          <h3>Local AI Inference</h3>
+          <p>Behavioral analysis and anomaly detection run entirely on-device. No API keys required. No traffic metadata sent offsite. Upgrade with your own cloud key for enhanced detection.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BETA -->
+  <section id="beta" class="beta-section">
+    <div class="beta-inner">
+      <span class="section-eyebrow">Early Access</span>
+      <h2 class="section-title">BEACON is building.</h2>
+      <p class="section-lead">Early access for home labs, security hobbyists, and small office IT. Help us shape the product before launch.</p>
+      <div class="status-bar">
+        <div class="status-item"><span class="status-dot green"></span>Core detection: active dev</div>
+        <div class="status-item"><span class="status-dot amber"></span>Mobile app: in progress</div>
+        <div class="status-item"><span class="status-dot green"></span>RPi 5 image: testing</div>
+      </div>
+      <form class="beta-form" action="https://formsubmit.co/beta@gil.consulting" method="POST">
+        <input type="hidden" name="_captcha" value="false" />
+        <input type="hidden" name="_subject" value="Beta Request — BEACON" />
+        <input type="email" name="email" placeholder="you@homelab.net" required autocomplete="email" />
+        <button type="submit">Join the Early Access List</button>
+      </form>
+      <p class="beta-note">[ No spam. We'll reach out when beta images are ready. ]</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>BEACON — Global Intelligence Laboratory</p>
+    <p>Veteran-Owned SDVOSB · <a href="https://gil.report">gil.report</a></p>
+  </footer>
+
+</body>
+</html>

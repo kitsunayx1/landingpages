@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Manage FOIA requests, benefits, and civic documents on your Mac. No login. No cloud. Just organized.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="CiviBridge — Civic Engagement & Government Documents">
+  <meta property="og:description" content="Manage FOIA requests, benefits, and civic documents on your Mac. No login. No cloud. Just organized.">
+  <meta property="og:image" content="https://gil.consulting/og/civibridge.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="CiviBridge — Civic Engagement & Government Documents">
+  <meta name="twitter:description" content="Manage FOIA requests, benefits, and civic documents on your Mac. No login. No cloud. Just organized.">
+  <meta name="twitter:image" content="https://gil.consulting/og/civibridge.png">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⬡</text></svg>">
+<title>CiviBridge — Civic Engagement & Government Document Platform</title>
+<meta name="description" content="Native macOS app for managing public records requests, civic documents, and local government interactions. All data stays local. No account required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:         #f8f9fb;
+    --surface:    #ffffff;
+    --surface2:   #f0f3f8;
+    --blue:       #1d4ed8;
+    --blue-dim:   rgba(29,78,216,0.08);
+    --blue-glow:  rgba(29,78,216,0.12);
+    --navy:       #1e3a5f;
+    --text:       #1e293b;
+    --muted:      rgba(30,41,59,0.52);
+    --faint:      rgba(30,41,59,0.05);
+    --border:     rgba(30,41,59,0.10);
+    --border-blue: rgba(29,78,216,0.22);
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── SUBTLE GRID BACKGROUND ───────────────────── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      linear-gradient(rgba(29,78,216,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(29,78,216,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  /* ── NAV ──────────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px;
+    background: rgba(248,249,251,0.92);
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-brand {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .nav-brand span { color: var(--blue); }
+  .nav-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--blue);
+    color: #fff;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 9px 22px;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  }
+  .nav-cta:hover { background: #1a44c7; transform: translateY(-1px); }
+
+  /* ── SECTIONS BASE ────────────────────────────── */
+  section { position: relative; z-index: 1; }
+
+  /* ── HERO ─────────────────────────────────────── */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 120px 48px 80px;
+    text-align: center;
+  }
+  .hero-inner { max-width: 880px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--blue);
+    background: var(--blue-dim);
+    border: 1px solid var(--border-blue);
+    padding: 6px 16px;
+    border-radius: 999px;
+    margin-bottom: 32px;
+  }
+  .hero-h1 {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: clamp(46px, 7.5vw, 88px);
+    line-height: 1.0;
+    letter-spacing: -0.04em;
+    margin-bottom: 28px;
+    color: var(--text);
+  }
+  .hero-h1 .accent { color: var(--blue); }
+  .hero-sub {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: clamp(16px, 2vw, 19px);
+    font-weight: 400;
+    color: rgba(30,41,59,0.65);
+    line-height: 1.6;
+    max-width: 640px;
+    margin: 0 auto 16px;
+  }
+  .hero-desc {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 560px;
+    margin: 0 auto 36px;
+  }
+  .hero-ctas {
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 72px;
+  }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--blue);
+    color: #fff;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 14px 32px;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(29,78,216,0.20);
+  }
+  .btn-primary:hover { background: #1a44c7; transform: translateY(-2px); box-shadow: 0 6px 28px rgba(29,78,216,0.28); }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--surface);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    padding: 13px 30px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(30,41,59,0.06);
+  }
+  .btn-secondary:hover { border-color: var(--blue); background: var(--bg); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(30,41,59,0.10); }
+
+  /* ── STAT STRIP ───────────────────────────────── */
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 1px solid var(--border-blue);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--surface);
+    box-shadow: 0 4px 24px rgba(29,78,216,0.06);
+  }
+  .stat-item {
+    padding: 28px 20px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-val {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 34px;
+    color: var(--blue);
+    letter-spacing: -0.04em;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  /* ── WHY SECTION ──────────────────────────────── */
+  #why {
+    padding: 120px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .section-eyebrow {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: clamp(30px, 3.8vw, 48px);
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-bottom: 60px;
+    max-width: 580px;
+    line-height: 1.15;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+  .why-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px;
+    transition: border-color 0.25s, transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 12px rgba(30,41,59,0.04);
+  }
+  .why-card:hover { border-color: var(--border-blue); transform: translateY(-3px); box-shadow: 0 8px 32px rgba(29,78,216,0.08); }
+  .card-num {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--blue);
+    letter-spacing: 0.10em;
+    margin-bottom: 16px;
+    display: block;
+    text-transform: uppercase;
+  }
+  .card-title {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 19px;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+  .card-body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ── FEATURES ─────────────────────────────────── */
+  #features {
+    padding: 0 48px 120px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    transition: border-color 0.25s, transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 12px rgba(30,41,59,0.04);
+  }
+  .feature-card:hover { border-color: var(--border-blue); transform: translateY(-3px); box-shadow: 0 8px 32px rgba(29,78,216,0.08); }
+  .feature-icon {
+    font-size: 28px;
+    margin-bottom: 16px;
+    display: block;
+    line-height: 1;
+  }
+  .feature-title {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .feature-desc {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ── TRUST STRIP ──────────────────────────────── */
+  .trust-strip {
+    margin: 0 48px 80px;
+    max-width: 1104px;
+    margin-left: auto;
+    margin-right: auto;
+    background: linear-gradient(135deg, var(--navy) 0%, #1d4ed8 100%);
+    border-radius: 20px;
+    padding: 52px 60px;
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    flex-wrap: wrap;
+  }
+  .trust-left { flex: 1; min-width: 240px; }
+  .trust-left h3 {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: -0.025em;
+    color: #ffffff;
+    margin-bottom: 12px;
+  }
+  .trust-left p {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    color: rgba(255,255,255,0.68);
+    line-height: 1.7;
+  }
+  .trust-right {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 0 0 auto;
+  }
+  .trust-point {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .trust-check {
+    width: 28px; height: 28px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 13px;
+  }
+  .trust-point-text {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+  }
+
+  /* ── BETA SECTION ─────────────────────────────── */
+  #beta {
+    padding: 100px 48px;
+    text-align: center;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .beta-title {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: clamp(32px, 4.5vw, 56px);
+    letter-spacing: -0.04em;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.1;
+  }
+  .beta-sub {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 17px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 520px;
+    margin: 0 auto 44px;
+  }
+  .signup-form {
+    display: flex;
+    gap: 12px;
+    max-width: 520px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .signup-form input[type="email"] {
+    flex: 1;
+    min-width: 260px;
+    background: var(--bg);
+    border: 1px solid var(--border-blue);
+    border-radius: 999px;
+    padding: 14px 24px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .signup-form input[type="email"]:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(29,78,216,0.10); }
+  .signup-form input[type="email"]::placeholder { color: var(--muted); }
+  .signup-form button {
+    background: var(--blue);
+    color: #fff;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 14px 28px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(29,78,216,0.20);
+  }
+  .signup-form button:hover { background: #1a44c7; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(29,78,216,0.28); }
+
+  /* ── FOOTER ───────────────────────────────────── */
+  footer {
+    padding: 40px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .footer-brand {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .footer-brand span { color: var(--blue); }
+  .footer-meta {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.03em;
+    text-align: right;
+  }
+  .footer-meta a { color: var(--muted); text-decoration: none; }
+  .footer-meta a:hover { color: var(--blue); }
+
+  /* ── ANIMATIONS ───────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero-inner > * {
+    animation: fadeUp 0.7s ease forwards;
+    opacity: 0;
+  }
+  .hero-inner > *:nth-child(1) { animation-delay: 0.05s; }
+  .hero-inner > *:nth-child(2) { animation-delay: 0.15s; }
+  .hero-inner > *:nth-child(3) { animation-delay: 0.25s; }
+  .hero-inner > *:nth-child(4) { animation-delay: 0.33s; }
+  .hero-inner > *:nth-child(5) { animation-delay: 0.42s; }
+  .hero-inner > *:nth-child(6) { animation-delay: 0.52s; }
+
+  /* ── RESPONSIVE ───────────────────────────────── */
+  @media (max-width: 768px) {
+    nav { padding: 0 24px; }
+    #hero { padding: 100px 24px 60px; }
+    .hero-h1 { font-size: 42px; }
+    .stat-strip { grid-template-columns: repeat(2, 1fr); }
+    .stat-item:nth-child(2) { border-right: none; }
+    .stat-item:nth-child(3) { border-top: 1px solid var(--border); }
+    .stat-item:nth-child(4) { border-top: 1px solid var(--border); border-right: none; }
+    #why, #features { padding: 80px 24px; }
+    .card-grid { grid-template-columns: 1fr; }
+    .feature-grid { grid-template-columns: 1fr; }
+    .trust-strip { margin: 0 24px 60px; padding: 36px 28px; gap: 32px; }
+    #beta { padding: 80px 24px; }
+    footer { padding: 32px 24px; flex-direction: column; text-align: center; }
+    .footer-meta { text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="#"><span>🏛</span> CiviBridge</a>
+  <a class="nav-cta" href="#beta">Join Beta</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Civic Engagement Platform · macOS · Local-Only</div>
+    <h1 class="hero-h1">Navigate government.<br>Don't get <span class="accent">lost in it.</span></h1>
+    <p class="hero-sub">A native macOS app for managing public records requests, civic documents, and local government interactions. All on your machine.</p>
+    <p class="hero-desc">CiviBridge is your dedicated home for FOIA requests, benefit applications, meeting minutes, and public comments. Track every open request, follow up on time, and keep all your civic documents organized — with nothing leaving your Mac.</p>
+    <div class="hero-ctas">
+      <a class="btn-primary" href="#beta">Join the Waitlist</a>
+      <a class="btn-secondary" href="#features">See Features</a>
+    </div>
+    <div class="stat-strip">
+      <div class="stat-item">
+        <span class="stat-val">100%</span>
+        <span class="stat-label">Local</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-val">FOIA</span>
+        <span class="stat-label">Ready</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-val">No Account</span>
+        <span class="stat-label">Required</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-val">macOS</span>
+        <span class="stat-label">Native</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why">
+  <div class="section-eyebrow">Why we built this</div>
+  <h2 class="section-title">Government paperwork deserves better tools.</h2>
+  <div class="card-grid">
+    <div class="why-card">
+      <span class="card-num">01</span>
+      <div class="card-title">Government documents deserve a dedicated home</div>
+      <p class="card-body">FOIA requests, benefit applications, meeting minutes, public comments — these don't fit cleanly into a notes app or a file folder. CiviBridge gives them a structured home with the metadata they need: status, agency, deadlines, and response tracking.</p>
+    </div>
+    <div class="why-card">
+      <span class="card-num">02</span>
+      <div class="card-title">Track your requests — every one of them</div>
+      <p class="card-body">Know exactly where every records request stands, what's outstanding, and when to follow up. CiviBridge surfaces overdue requests, tracks acknowledgment letters, and keeps a full timeline for every open matter.</p>
+    </div>
+    <div class="why-card">
+      <span class="card-num">03</span>
+      <div class="card-title">Your data is yours</div>
+      <p class="card-body">CiviBridge stores everything locally. No government data goes through a GIL server. Your FOIA requests, benefit documents, and civic correspondence never touch the cloud unless you choose to back them up yourself.</p>
+    </div>
+    <div class="why-card">
+      <span class="card-num">04</span>
+      <div class="card-title">Built for engaged citizens</div>
+      <p class="card-body">Whether you're tracking your city council's voting record, navigating federal benefits, or filing your first public records request, CiviBridge makes the process manageable. No prior experience required.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-eyebrow">Features</div>
+  <h2 class="section-title">Every tool the informed citizen needs.</h2>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <span class="feature-icon">📑</span>
+      <div class="feature-title">Document Manager</div>
+      <p class="feature-desc">A structured library for all your civic documents — FOIA responses, benefit letters, meeting agendas, and public comments. Tagged, searchable, and organized by agency and date.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📬</span>
+      <div class="feature-title">FOIA Request Tracker</div>
+      <p class="feature-desc">Log requests to any federal, state, or local agency. Track submission dates, acknowledgment deadlines, response status, and appeal windows. Never miss a follow-up date again.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🏛</span>
+      <div class="feature-title">Meeting Calendar</div>
+      <p class="feature-desc">Track city council, school board, planning commission, and other local government meetings. Add agendas, minutes, and your own notes. Follow items across meetings over time.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📋</span>
+      <div class="feature-title">Benefit Navigator</div>
+      <p class="feature-desc">Guided workflows for common federal and state benefit applications. Know what documents you need, where to submit, and how to track your application status — all in plain language.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🔍</span>
+      <div class="feature-title">Document Search</div>
+      <p class="feature-desc">Instant full-text search across all your civic documents. Find any letter, response, or agenda item in milliseconds — across agencies, dates, and document types.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">💾</span>
+      <div class="feature-title">Local-Only Storage</div>
+      <p class="feature-desc">All documents and request data are stored in your local file system. Back up with Time Machine, organize with Finder. CiviBridge never transmits your civic data anywhere.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST CALLOUT -->
+<div class="trust-strip">
+  <div class="trust-left">
+    <h3>Built by veterans, for citizens.</h3>
+    <p>CiviBridge is built by Global Intelligence Laboratory, a veteran-owned small business. We believe civic engagement is a right, and that Americans deserve better tools to exercise it. Your data belongs to you — full stop.</p>
+  </div>
+  <div class="trust-right">
+    <div class="trust-point">
+      <div class="trust-check">✓</div>
+      <span class="trust-point-text">No account required, ever</span>
+    </div>
+    <div class="trust-point">
+      <div class="trust-check">✓</div>
+      <span class="trust-point-text">Zero data transmitted to GIL servers</span>
+    </div>
+    <div class="trust-point">
+      <div class="trust-check">✓</div>
+      <span class="trust-point-text">Veteran-Owned SDVOSB</span>
+    </div>
+    <div class="trust-point">
+      <div class="trust-check">✓</div>
+      <span class="trust-point-text">macOS-native, no Electron</span>
+    </div>
+  </div>
+</div>
+
+<!-- BETA -->
+<section id="beta">
+  <h2 class="beta-title">Coming soon for macOS.</h2>
+  <p class="beta-sub">CiviBridge is finishing development. Join the waitlist to be first in.</p>
+  <form class="signup-form" action="https://formsubmit.co/beta@gil.consulting" method="POST">
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="_subject" value="Beta Request — CiviBridge">
+    <input type="email" name="email" placeholder="your@email.com" required>
+    <button type="submit">Join Waitlist</button>
+  </form>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand"><span>🏛</span> CiviBridge — Global Intelligence Laboratory</div>
+  <div class="footer-meta">
+    Veteran-Owned SDVOSB · <a href="https://gil.report" target="_blank">gil.report</a>
+  </div>
+</footer>
+
+</body>
+</html>

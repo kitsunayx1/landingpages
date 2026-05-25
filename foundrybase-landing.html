@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoundryBase — The Operating System for Your LLC</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Newsreader:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --ink: #09090B;
+    --ink-light: #18181B;
+    --ink-mid: #27272A;
+    --zinc-600: #52525B;
+    --zinc-500: #71717A;
+    --zinc-400: #A1A1AA;
+    --zinc-300: #D4D4D8;
+    --zinc-200: #E4E4E7;
+    --zinc-100: #F4F4F5;
+    --zinc-50: #FAFAFA;
+    --white: #FFFFFF;
+    --emerald: #059669;
+    --emerald-light: #D1FAE5;
+    --emerald-dark: #047857;
+    --violet: #7C3AED;
+    --violet-light: #EDE9FE;
+    --amber: #D97706;
+    --amber-light: #FEF3C7;
+    --blue: #2563EB;
+    --blue-light: #DBEAFE;
+    --rose: #E11D48;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    color: var(--ink);
+    background: var(--white);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 1rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--zinc-200);
+  }
+
+  .nav-logo {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: -0.03em;
+  }
+
+  .nav-logo span { color: var(--emerald); }
+
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a {
+    color: var(--zinc-500);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+
+  /* ── Buttons ── */
+  .btn-dark {
+    background: var(--ink);
+    color: var(--white);
+    border: none;
+    padding: 0.85rem 2rem;
+    font-family: 'Sora', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .btn-dark:hover { background: var(--ink-mid); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(9, 9, 11, 0.15); }
+
+  .btn-light {
+    background: var(--zinc-100);
+    color: var(--ink);
+    border: 1px solid var(--zinc-200);
+    padding: 0.85rem 2rem;
+    font-family: 'Sora', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .btn-light:hover { background: var(--zinc-200); }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8rem 3rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--white) 0%, var(--zinc-50) 100%);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(5, 150, 105, 0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    max-width: 750px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--emerald-light);
+    color: var(--emerald-dark);
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+
+  .hero h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1.08;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.04em;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--emerald), #34d399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    font-size: 1.15rem;
+    color: var(--zinc-500);
+    max-width: 540px;
+    margin: 0 auto 3rem;
+    font-weight: 400;
+    line-height: 1.8;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 4rem;
+  }
+
+  /* ── Dashboard preview ── */
+  .dashboard-preview {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--white);
+    border: 1px solid var(--zinc-200);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 25px 80px rgba(9, 9, 11, 0.08);
+  }
+
+  .dp-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.2rem;
+    background: var(--zinc-50);
+    border-bottom: 1px solid var(--zinc-200);
+  }
+
+  .dp-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dp-dot.r { background: #FF5F57; }
+  .dp-dot.y { background: #FEBC2E; }
+  .dp-dot.g { background: #28C840; }
+
+  .dp-tab {
+    margin-left: 1rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--zinc-400);
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+    letter-spacing: 0.03em;
+  }
+
+  .dp-tab.active { background: var(--white); color: var(--ink); border: 1px solid var(--zinc-200); }
+
+  .dp-body {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    min-height: 360px;
+  }
+
+  .dp-sidebar {
+    background: var(--zinc-50);
+    padding: 1.2rem;
+    border-right: 1px solid var(--zinc-200);
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .dp-nav-item {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--zinc-500);
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+
+  .dp-nav-item.active { background: var(--emerald-light); color: var(--emerald-dark); font-weight: 600; }
+
+  .dp-main { padding: 1.5rem; }
+
+  .dp-main-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 1.2rem;
+  }
+
+  .dp-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .dp-stat {
+    padding: 0.8rem;
+    background: var(--zinc-50);
+    border: 1px solid var(--zinc-100);
+    border-radius: 8px;
+  }
+
+  .dp-stat-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .dp-stat-label {
+    font-size: 0.68rem;
+    color: var(--zinc-400);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.2rem;
+  }
+
+  .dp-stat-value.green { color: var(--emerald); }
+  .dp-stat-value.violet { color: var(--violet); }
+  .dp-stat-value.amber { color: var(--amber); }
+  .dp-stat-value.blue { color: var(--blue); }
+
+  .dp-table { width: 100%; }
+
+  .dp-table-header {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 0.8fr;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--zinc-400);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--zinc-200);
+  }
+
+  .dp-table-row {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 0.8fr;
+    font-size: 0.82rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--zinc-100);
+    align-items: center;
+  }
+
+  .dp-table-row span:first-child { font-weight: 600; color: var(--ink); }
+  .dp-table-row span { color: var(--zinc-500); }
+
+  .dp-tag {
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    display: inline-block;
+  }
+
+  .tag-active { background: var(--emerald-light); color: var(--emerald); }
+  .tag-invoiced { background: var(--violet-light); color: var(--violet); }
+  .tag-proposal { background: var(--amber-light); color: var(--amber); }
+
+  /* ── Sections ── */
+  section { padding: 6rem 3rem; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+
+  .section-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--emerald);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 1rem;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+  }
+
+  .section-subtitle {
+    font-size: 1.05rem;
+    color: var(--zinc-500);
+    max-width: 540px;
+    font-weight: 400;
+    line-height: 1.8;
+  }
+
+  /* ── Features ── */
+  .features-section { background: var(--zinc-50); }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3.5rem;
+  }
+
+  .feature-card {
+    padding: 2.2rem 1.8rem;
+    background: var(--white);
+    border: 1px solid var(--zinc-200);
+    border-radius: 14px;
+    transition: all 0.3s;
+  }
+
+  .feature-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(9, 9, 11, 0.06); }
+
+  .fc-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+  }
+
+  .fc-icon.green { background: var(--emerald-light); color: var(--emerald); }
+  .fc-icon.violet { background: var(--violet-light); color: var(--violet); }
+  .fc-icon.amber { background: var(--amber-light); color: var(--amber); }
+  .fc-icon.blue { background: var(--blue-light); color: var(--blue); }
+  .fc-icon.rose { background: #FFE4E6; color: var(--rose); }
+  .fc-icon.zinc { background: var(--zinc-100); color: var(--zinc-600); }
+
+  .feature-card h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-card p {
+    font-size: 0.88rem;
+    color: var(--zinc-500);
+    line-height: 1.65;
+  }
+
+  /* ── Tax season ── */
+  .tax-section { position: relative; }
+
+  .tax-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    margin-top: 3rem;
+    align-items: center;
+  }
+
+  .tax-card {
+    background: var(--zinc-50);
+    border: 1px solid var(--zinc-200);
+    border-radius: 14px;
+    padding: 2rem;
+  }
+
+  .tax-card-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--zinc-200);
+  }
+
+  .tax-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    font-size: 0.88rem;
+  }
+
+  .tax-line span:first-child { color: var(--zinc-500); }
+  .tax-line span:last-child { font-weight: 600; color: var(--ink); }
+  .tax-line.total { border-top: 2px solid var(--zinc-200); margin-top: 0.5rem; padding-top: 0.8rem; }
+  .tax-line.total span:last-child { color: var(--emerald); font-size: 1.1rem; }
+
+  .tax-points { display: flex; flex-direction: column; gap: 1.2rem; }
+
+  .tax-point h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.3rem;
+  }
+
+  .tax-point p {
+    font-size: 0.9rem;
+    color: var(--zinc-500);
+    line-height: 1.6;
+  }
+
+  /* ── CTA ── */
+  .cta-section {
+    background: var(--ink);
+    padding: 6rem 3rem;
+    text-align: center;
+  }
+
+  .cta-section .section-eyebrow { color: var(--emerald); }
+  .cta-section .section-title { color: var(--white); max-width: 600px; margin: 0 auto 1rem; }
+  .cta-section .section-subtitle { color: var(--zinc-400); margin: 0 auto 3rem; text-align: center; }
+
+  .waitlist-form {
+    display: flex;
+    gap: 0.75rem;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .waitlist-form input {
+    flex: 1;
+    padding: 1rem 1.25rem;
+    border: 1.5px solid var(--ink-mid);
+    background: var(--ink-light);
+    color: var(--white);
+    border-radius: 10px;
+    font-family: 'Sora', sans-serif;
+    font-size: 0.92rem;
+    transition: border-color 0.2s;
+  }
+
+  .waitlist-form input::placeholder { color: var(--zinc-600); }
+  .waitlist-form input:focus { outline: none; border-color: var(--emerald); }
+
+  .waitlist-note {
+    font-size: 0.78rem;
+    color: var(--zinc-600);
+    margin-top: 1rem;
+  }
+
+  .success-msg {
+    display: none;
+    color: var(--emerald);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+  }
+
+  /* ── Footer ── */
+  footer {
+    padding: 2.5rem 3rem;
+    text-align: center;
+    color: var(--zinc-600);
+    font-size: 0.78rem;
+    background: var(--ink);
+    border-top: 1px solid var(--ink-mid);
+  }
+
+  footer a { color: var(--emerald); text-decoration: none; }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(25px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-inner { animation: fadeUp 0.8s ease both; }
+  .dashboard-preview { animation: fadeUp 0.8s ease 0.3s both; }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links a:not(:last-child) { display: none; }
+    .hero { padding: 7rem 1.5rem 3rem; }
+    .hero h1 { font-size: 2.6rem; }
+    .dashboard-preview { display: none; }
+    .features-grid { grid-template-columns: 1fr; }
+    .dp-stats { grid-template-columns: 1fr 1fr; }
+    .tax-grid { grid-template-columns: 1fr; }
+    section { padding: 4rem 1.5rem; }
+    .waitlist-form { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a href="#" class="nav-logo">foundry<span>base</span></a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#taxes">Tax Season</a>
+    <a href="#waitlist"><button class="btn-dark" style="padding: 0.6rem 1.5rem; font-size: 0.82rem;">Join Waitlist</button></a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-pill">◆ Now in Development</div>
+    <h1>The operating system for your <em>LLC</em></h1>
+    <p>FoundryBase is the brain of your business. Clients, projects, billable hours, expenses, contracts, and taxes — one place, always current, always ready for your accountant.</p>
+    <div class="hero-actions">
+      <a href="#waitlist"><button class="btn-dark">Join the Waitlist</button></a>
+      <a href="#features"><button class="btn-light">See Features</button></a>
+    </div>
+  </div>
+
+  <div class="dashboard-preview">
+    <div class="dp-bar">
+      <div class="dp-dot r"></div>
+      <div class="dp-dot y"></div>
+      <div class="dp-dot g"></div>
+      <span class="dp-tab active">Dashboard</span>
+      <span class="dp-tab">Clients</span>
+      <span class="dp-tab">Time Log</span>
+      <span class="dp-tab">Invoices</span>
+      <span class="dp-tab">Expenses</span>
+    </div>
+    <div class="dp-body">
+      <div class="dp-sidebar">
+        <div class="dp-nav-item active">◈ Dashboard</div>
+        <div class="dp-nav-item">◇ Clients</div>
+        <div class="dp-nav-item">□ Projects</div>
+        <div class="dp-nav-item">△ Time Log</div>
+        <div class="dp-nav-item">○ Invoices</div>
+        <div class="dp-nav-item">◆ Expenses</div>
+        <div class="dp-nav-item">▷ Contracts</div>
+        <div class="dp-nav-item">☆ Tax Prep</div>
+      </div>
+      <div class="dp-main">
+        <div class="dp-main-title">Q1 2026 Overview</div>
+        <div class="dp-stats">
+          <div class="dp-stat">
+            <div class="dp-stat-value green">$47,200</div>
+            <div class="dp-stat-label">Revenue YTD</div>
+          </div>
+          <div class="dp-stat">
+            <div class="dp-stat-value violet">142.5</div>
+            <div class="dp-stat-label">Hours Billed</div>
+          </div>
+          <div class="dp-stat">
+            <div class="dp-stat-value amber">$8,340</div>
+            <div class="dp-stat-label">Expenses YTD</div>
+          </div>
+          <div class="dp-stat">
+            <div class="dp-stat-value blue">6</div>
+            <div class="dp-stat-label">Active Clients</div>
+          </div>
+        </div>
+
+        <div class="dp-table-header">
+          <span>Client</span>
+          <span>Project</span>
+          <span>Revenue</span>
+          <span>Status</span>
+        </div>
+        <div class="dp-table-row">
+          <span>Meridian Health</span>
+          <span>HIPAA Audit</span>
+          <span>$12,000</span>
+          <span><span class="dp-tag tag-active">Active</span></span>
+        </div>
+        <div class="dp-table-row">
+          <span>Apex Defense</span>
+          <span>CMMC L2 Prep</span>
+          <span>$18,500</span>
+          <span><span class="dp-tag tag-invoiced">Invoiced</span></span>
+        </div>
+        <div class="dp-table-row">
+          <span>NovaTech SaaS</span>
+          <span>Pentest + Remediation</span>
+          <span>$4,200</span>
+          <span><span class="dp-tag tag-active">Active</span></span>
+        </div>
+        <div class="dp-table-row">
+          <span>Summit Auto Group</span>
+          <span>FTC Safeguards</span>
+          <span>$8,500</span>
+          <span><span class="dp-tag tag-proposal">Proposal</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features-section" id="features">
+  <div class="section-inner">
+    <div class="section-eyebrow">Features</div>
+    <div class="section-title">Everything your LLC needs in one place</div>
+    <div class="section-subtitle">Stop duct-taping QuickBooks, spreadsheets, and sticky notes. FoundryBase is purpose-built for how you actually run a business.</div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="fc-icon green">◈</div>
+        <h3>Client Management</h3>
+        <p>Full client profiles with contact info, contract history, communication log, and lifetime revenue. Know every client at a glance.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon violet">◇</div>
+        <h3>Project Tracking</h3>
+        <p>Track every engagement from proposal to payment. Status lifecycle, milestones, deliverables, and linked time entries. Nothing falls through the cracks.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon amber">□</div>
+        <h3>Time Logging</h3>
+        <p>Log billable hours by client and project. Timer or manual entry. Auto-calculates totals for invoicing and tracks utilization rate.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon blue">△</div>
+        <h3>Invoicing & Payments</h3>
+        <p>Generate invoices from time logs and project milestones. Track payment status. Know who owes you and how overdue they are.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon rose">○</div>
+        <h3>Expense Tracking</h3>
+        <p>Log business expenses with categories, receipts, and tax deductibility flags. Import bank transactions or enter manually. Every dollar accounted for.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon zinc">◆</div>
+        <h3>Tax Prep Export</h3>
+        <p>End of year, one click. Revenue by client, deductible expenses by category, quarterly estimates, 1099 data. Hand it to your accountant or self-file with confidence.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon green">▷</div>
+        <h3>Gov Contract Tracking</h3>
+        <p>Track government contracts with SAM.gov data, contract numbers, period of performance, CLINs, and deliverable schedules. Built for the compliance you need.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon violet">☆</div>
+        <h3>Document Vault</h3>
+        <p>Store contracts, SOWs, NDAs, insurance certs, and licenses. Link documents to clients and projects. Everything findable in seconds.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon amber">⬡</div>
+        <h3>Dashboard & Reports</h3>
+        <p>Real-time P&L, revenue trends, client concentration, aging receivables, and utilization. Know the health of your business at all times.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Tax Season -->
+<section id="taxes">
+  <div class="section-inner">
+    <div class="section-eyebrow">Tax Season</div>
+    <div class="section-title">End of year in one click, not one month</div>
+    <div class="section-subtitle">FoundryBase tracks everything all year so tax season is an export, not an excavation.</div>
+
+    <div class="tax-grid">
+      <div class="tax-card">
+        <div class="tax-card-title">2025 Tax Summary — Your LLC</div>
+        <div class="tax-line"><span>Gross Revenue</span><span>$142,800</span></div>
+        <div class="tax-line"><span>Software & Tools</span><span>-$4,200</span></div>
+        <div class="tax-line"><span>Hardware</span><span>-$6,800</span></div>
+        <div class="tax-line"><span>Cloud Services</span><span>-$2,400</span></div>
+        <div class="tax-line"><span>Professional Services</span><span>-$3,200</span></div>
+        <div class="tax-line"><span>Home Office</span><span>-$7,500</span></div>
+        <div class="tax-line"><span>Insurance</span><span>-$2,800</span></div>
+        <div class="tax-line"><span>Other Deductions</span><span>-$1,900</span></div>
+        <div class="tax-line total"><span>Net Profit</span><span>$114,000</span></div>
+      </div>
+      <div class="tax-points">
+        <div class="tax-point">
+          <h4>Every expense categorized automatically</h4>
+          <p>As you log expenses throughout the year, FoundryBase categorizes them by tax-relevant categories. No year-end scramble to sort receipts.</p>
+        </div>
+        <div class="tax-point">
+          <h4>1099 data ready for every client</h4>
+          <p>Revenue by client, by project, by month. Whether you need to issue 1099s or report income, the data is already organized.</p>
+        </div>
+        <div class="tax-point">
+          <h4>Quarterly estimate tracking</h4>
+          <p>FoundryBase calculates estimated quarterly tax payments based on your year-to-date revenue and expenses. Never miss a payment or overpay.</p>
+        </div>
+        <div class="tax-point">
+          <h4>One-click accountant export</h4>
+          <p>Generate a complete tax package — P&L, expense reports, client revenue summary, receipt archive. Your accountant will thank you.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="waitlist">
+  <div class="section-inner">
+    <div class="section-eyebrow">Early Access</div>
+    <div class="section-title">Run your LLC like it has a back office</div>
+    <div class="section-subtitle">Join the waitlist. We're building FoundryBase for solo operators and small teams who need structure without overhead.</div>
+
+    <div class="waitlist-form" id="waitlistForm">
+      <input type="email" id="emailInput" placeholder="you@yourllc.com" required />
+      <button class="btn-dark" onclick="handleSignup()">Join Waitlist</button>
+    </div>
+    <div class="waitlist-note">Early access members shape the product. Your feedback matters.</div>
+    <div class="success-msg" id="successMsg">✓ You're on the list. We'll keep you updated.</div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>FoundryBase is a product of [Your LLC] &nbsp;·&nbsp; <a href="#">Privacy</a> &nbsp;·&nbsp; <a href="#">Terms</a></p>
+  <p style="margin-top: 0.4rem;">The brain of your business.</p>
+</footer>
+
+<script>
+function handleSignup() {
+  const email = document.getElementById('emailInput').value;
+  if (email && email.includes('@')) {
+    document.getElementById('waitlistForm').style.display = 'none';
+    document.querySelector('.waitlist-note').style.display = 'none';
+    document.getElementById('successMsg').style.display = 'block';
+    console.log('FoundryBase signup:', email);
+  }
+}
+
+document.getElementById('emailInput').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') handleSignup();
+});
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.feature-card, .tax-point').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(15px)';
+  el.style.transition = 'all 0.5s ease';
+  observer.observe(el);
+});
+</script>
+
+</body>
+</html>

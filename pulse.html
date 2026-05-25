@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Write, schedule, and measure content alongside SEO audits and analytics — without a monthly SaaS bill. Local-first, Touch ID secured.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="PULSE — Broadcast & Marketing OS for macOS">
+  <meta property="og:description" content="Write, schedule, and measure content alongside SEO audits and analytics — without a monthly SaaS bill. Local-first, Touch ID secured.">
+  <meta property="og:image" content="https://gil.consulting/og/pulse.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PULSE — Broadcast & Marketing OS for macOS">
+  <meta name="twitter:description" content="Write, schedule, and measure content alongside SEO audits and analytics — without a monthly SaaS bill. Local-first, Touch ID secured.">
+  <meta name="twitter:image" content="https://gil.consulting/og/pulse.png">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⬡</text></svg>">
+  <title>PULSE — Write, schedule, measure. All on your Mac.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #06050f;
+      --surface: #0f0d1e;
+      --surface2: #141228;
+      --border: rgba(139,92,246,0.12);
+      --border-light: rgba(255,255,255,0.06);
+      --text: #f1f0fb;
+      --muted: #7c7a9a;
+      --accent: #8b5cf6;
+      --pink: #ec4899;
+      --gold: #f59e0b;
+      --accent-dim: rgba(139,92,246,0.12);
+      --accent-glow: rgba(139,92,246,0.35);
+      --pink-glow: rgba(236,72,153,0.2);
+      --font-head: 'Space Grotesk', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Broadcast wave background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 50%, rgba(139,92,246,0.04) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 30%, rgba(236,72,153,0.04) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 50% at 50% 80%, rgba(245,158,11,0.03) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      height: 64px;
+      background: rgba(6,5,15,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .nav-brand {
+      font-family: var(--font-head);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--accent); }
+      50% { opacity: 0.5; box-shadow: 0 0 16px var(--accent); }
+    }
+
+    .nav-beta {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.45rem 1.25rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--pink));
+      color: #fff;
+      font-family: var(--font-head);
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity 0.2s, box-shadow 0.2s;
+    }
+
+    .nav-beta:hover {
+      opacity: 0.88;
+      box-shadow: 0 0 20px var(--pink-glow);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 7rem 2rem 4rem;
+      text-align: center;
+      z-index: 1;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--accent-dim);
+      font-family: var(--font-head);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 1.75rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.1s;
+    }
+
+    .hero h1 {
+      font-family: var(--font-head);
+      font-size: clamp(2.8rem, 7.5vw, 5.4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.25s;
+    }
+
+    .hero h1 .accent {
+      background: linear-gradient(135deg, var(--accent), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-family: var(--font-head);
+      font-size: clamp(0.95rem, 2.2vw, 1.15rem);
+      font-weight: 500;
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto 0.75rem;
+      line-height: 1.7;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.4s;
+    }
+
+    .hero-body {
+      font-size: 0.95rem;
+      color: rgba(241,240,251,0.45);
+      max-width: 480px;
+      margin: 0 auto 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.52s;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 3.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.64s;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.82rem 2rem;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--pink));
+      color: #fff;
+      font-family: var(--font-head);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.88;
+      box-shadow: 0 8px 30px var(--pink-glow);
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.82rem 2rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-light);
+      color: var(--muted);
+      font-family: var(--font-head);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .stat-strip {
+      display: flex;
+      gap: 0;
+      justify-content: center;
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.78s;
+      background: var(--surface);
+    }
+
+    .stat-item {
+      padding: 1.1rem 2.25rem;
+      text-align: center;
+      border-right: 1px solid var(--border-light);
+    }
+
+    .stat-item:last-child { border-right: none; }
+
+    .stat-value {
+      font-family: var(--font-head);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--accent);
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    /* ── SECTIONS ── */
+    section { position: relative; z-index: 1; }
+
+    .section-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 5.5rem 2rem;
+    }
+
+    .section-eyebrow {
+      font-family: var(--font-head);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-family: var(--font-head);
+      font-size: clamp(1.7rem, 4vw, 2.6rem);
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .section-lead {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 580px;
+      margin-bottom: 3rem;
+      line-height: 1.7;
+    }
+
+    /* ── WHY CARDS ── */
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    .why-card {
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      padding: 2rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .why-card:hover {
+      border-color: var(--border);
+      box-shadow: 0 4px 30px rgba(139,92,246,0.08);
+    }
+
+    .why-num {
+      font-family: var(--font-head);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      margin-bottom: 0.75rem;
+    }
+
+    .why-card h3 {
+      font-family: var(--font-head);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.6rem;
+    }
+
+    .why-card p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── FEATURES ── */
+    .features-section { background: var(--surface); }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+
+    .feature-card {
+      padding: 1.75rem;
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      background: var(--bg);
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--border);
+      box-shadow: 0 4px 24px rgba(139,92,246,0.1);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .feature-card h3 {
+      font-family: var(--font-head);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+      font-size: 0.86rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── BETA ── */
+    .beta-section { background: var(--bg); }
+
+    .beta-inner {
+      max-width: 580px;
+      margin: 0 auto;
+      padding: 5.5rem 2rem;
+      text-align: center;
+    }
+
+    .beta-inner .section-eyebrow { display: block; margin-bottom: 0.75rem; }
+    .beta-inner .section-title { margin-bottom: 0.75rem; }
+    .beta-inner .section-lead { max-width: 100%; margin-bottom: 2rem; }
+
+    .beta-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .beta-form input[type="email"] {
+      width: 100%;
+      padding: 0.9rem 1.3rem;
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .beta-form input[type="email"]::placeholder { color: var(--muted); }
+
+    .beta-form input[type="email"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
+    }
+
+    .beta-form button {
+      width: 100%;
+      padding: 0.9rem;
+      background: linear-gradient(135deg, var(--accent), var(--pink));
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-head);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, box-shadow 0.2s;
+    }
+
+    .beta-form button:hover {
+      opacity: 0.88;
+      box-shadow: 0 8px 28px var(--pink-glow);
+    }
+
+    .beta-note {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.75rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border-light);
+      padding: 2.25rem;
+      text-align: center;
+      background: var(--surface);
+    }
+
+    footer p {
+      font-family: var(--font-head);
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 2;
+    }
+
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── ANIMATION ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .stat-strip { flex-wrap: wrap; }
+      .stat-item { flex: 1 1 50%; border-right: none; border-bottom: 1px solid var(--border-light); }
+      .stat-item:nth-child(odd) { border-right: 1px solid var(--border-light); }
+      .why-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      nav { padding: 0 1.25rem; }
+      .section-inner { padding: 3.5rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-brand" href="#">
+      <div class="nav-dot"></div>
+      PULSE
+    </a>
+    <a class="nav-beta" href="#beta">Join Beta</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow">macOS · Local-First · No SaaS Subscription</div>
+    <h1>Your broadcast.<br>Your marketing.<br><span class="accent">Your machine.</span></h1>
+    <p class="hero-sub">A complete local-first publishing OS for macOS. Schedule content, audit your site, and review analytics — without a monthly SaaS bill.</p>
+    <p class="hero-body">Two workspaces, one app. Broadcast for content creation and scheduling. Marketing for SEO audits, Google Search Console, and GA4 analytics. Secured with Touch ID. Your data stays in ~/Library.</p>
+    <div class="hero-ctas">
+      <a href="#beta" class="btn-primary">Join the Beta</a>
+      <a href="#why" class="btn-ghost">See What's Inside</a>
+    </div>
+    <div class="stat-strip">
+      <div class="stat-item">
+        <span class="stat-value">2</span>
+        <span class="stat-label">Workspaces</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">GSC + GA4</span>
+        <span class="stat-label">Integrated</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">Local</span>
+        <span class="stat-label">Storage</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">Touch ID</span>
+        <span class="stat-label">Secured</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY WE BUILT THIS -->
+  <section id="why">
+    <div class="section-inner">
+      <div class="section-eyebrow">Why We Built This</div>
+      <h2 class="section-title">The whole publishing stack. One app. One purchase.</h2>
+      <p class="section-lead">Every creator and marketer ends up paying five different SaaS tools to do one job. PULSE puts it all under one roof — and keeps it on your machine.</p>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-num">01</div>
+          <h3>No SaaS subscription for your own content</h3>
+          <p>Hootsuite, Buffer, and Semrush charge per seat per month. PULSE is a local app. One purchase. Your data lives in ~/Library, not their server.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-num">02</div>
+          <h3>Both broadcast AND marketing in one window</h3>
+          <p>Stop switching between your scheduling tool, your SEO tool, and your analytics dashboard. PULSE is the whole stack, unified in a single SwiftUI window.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-num">03</div>
+          <h3>Your Google credentials, your data</h3>
+          <p>GSC and GA4 connections use your own Google OAuth tokens. PULSE reads your data; it never touches GIL servers. You own the connection.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-num">04</div>
+          <h3>AI recommendations without AI billing</h3>
+          <p>ENVOY-style recommendations run locally. No monthly AI subscription. Bring your own key if you want cloud model quality — but the default works offline.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" class="features-section">
+    <div class="section-inner">
+      <div class="section-eyebrow">Features</div>
+      <h2 class="section-title">Two workspaces. Everything you publish. Everything you measure.</h2>
+      <p class="section-lead">From first draft to published post to performance report — PULSE covers the full content lifecycle without leaving your Mac.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">✍</div>
+          <h3>Broadcast Workspace</h3>
+          <p>Write, draft, schedule, and publish social content across platforms. Your editorial calendar, drafts, and post history — all local.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Marketing Workspace</h3>
+          <p>SEO audits, keyword research, page analysis, backlink views, and content pipeline management — in the same app as your scheduler.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔗</div>
+          <h3>GSC + GA4 Views</h3>
+          <p>Connect your own Google account. See Search Console impressions, clicks, and positions alongside GA4 traffic data in one dashboard.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>ENVOY AI Recommendations</h3>
+          <p>Local AI analyzes your content and site performance to surface recommendations. Works offline. Bring your own API key to upgrade quality.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>Touch ID Lock</h3>
+          <p>Device-level authentication on open. Your content drafts and analytics data are locked behind biometric or device auth — not just a password.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📍</div>
+          <h3>Local HTTP API</h3>
+          <p>Expose a local API endpoint for automation, scripting, and integration with your existing tools. No cloud relay. All traffic stays on localhost.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BETA -->
+  <section id="beta" class="beta-section">
+    <div class="beta-inner">
+      <span class="section-eyebrow">Early Access</span>
+      <h2 class="section-title">Built for creators who own their stack.</h2>
+      <p class="section-lead">PULSE is in active development for macOS. Join the beta to get early access and help shape the feature roadmap.</p>
+      <form class="beta-form" action="https://formsubmit.co/beta@gil.consulting" method="POST">
+        <input type="hidden" name="_captcha" value="false" />
+        <input type="hidden" name="_subject" value="Beta Request — PULSE" />
+        <input type="email" name="email" placeholder="you@yourdomain.com" required autocomplete="email" />
+        <button type="submit">Get Early Access</button>
+      </form>
+      <p class="beta-note">macOS beta. No spam. Unsubscribe anytime.</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>PULSE — Global Intelligence Laboratory</p>
+    <p>Veteran-Owned SDVOSB · <a href="https://gil.report">gil.report</a></p>
+  </footer>
+
+</body>
+</html>

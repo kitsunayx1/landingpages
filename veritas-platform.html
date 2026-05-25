@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veritas Platform — Case Management for Veteran Services</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF8;
+    --surface: #FFFFFF;
+    --surface2: #F4F3F0;
+    --navy: #1B2B45;
+    --navy-dim: rgba(27,43,69,0.06);
+    --accent: #2563EB;
+    --accent-dim: rgba(37,99,235,0.08);
+    --gold: #B45309;
+    --gold-dim: rgba(180,83,9,0.08);
+    --success: #15803D;
+    --warning: #B45309;
+    --danger: #B91C1C;
+    --text: #1A1A2E;
+    --muted: #6B7280;
+    --border: #E5E3DE;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 18px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(250,250,248,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nav-logo {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 18px;
+    color: var(--navy);
+    letter-spacing: 0.01em;
+  }
+  .nav-platform {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-left: 1px solid var(--border);
+    padding-left: 12px;
+    margin-left: 4px;
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+  .nav-links a {
+    font-size: 14px;
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 400;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--navy); }
+  .btn-nav {
+    background: var(--navy);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 9px 22px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-nav:hover { background: #243858; }
+
+  /* Hero */
+  .hero {
+    padding: 130px 48px 80px;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .hero-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .eyebrow-line { width: 24px; height: 2px; background: var(--accent); }
+  .eyebrow-text {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  h1 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: clamp(36px, 4.5vw, 60px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--navy);
+    margin-bottom: 24px;
+  }
+  h1 em { color: var(--accent); font-style: italic; }
+  .hero-sub {
+    font-size: 17px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 16px;
+    font-weight: 300;
+  }
+  .hero-desc {
+    font-size: 15px;
+    color: #9CA3AF;
+    line-height: 1.8;
+    margin-bottom: 40px;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+  .btn-primary-vp {
+    background: var(--navy);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 13px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+  }
+  .btn-primary-vp:hover { background: #243858; transform: translateY(-1px); }
+  .btn-outline-vp {
+    color: var(--muted);
+    font-size: 14px;
+    border: 1px solid var(--border);
+    padding: 12px 22px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+  }
+  .btn-outline-vp:hover { border-color: var(--navy); color: var(--navy); }
+
+  .org-types {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .org-chip {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    background: var(--surface);
+  }
+
+  /* Dashboard mock */
+  .dashboard-mock {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 16px 48px rgba(27,43,69,0.08);
+  }
+  .dm-header {
+    background: var(--navy);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .dm-logo {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 13px;
+    color: rgba(255,255,255,0.9);
+    flex: 1;
+  }
+  .dm-org-badge {
+    font-size: 10px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.6);
+    padding: 2px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .dm-body { padding: 16px; }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .kpi-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px;
+    border-top: 2px solid;
+  }
+  .kpi-num { font-size: 18px; font-weight: 700; color: var(--navy); }
+  .kpi-lbl { font-size: 9px; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .case-list { display: flex; flex-direction: column; gap: 5px; }
+  .case-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+  .case-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .case-name { font-weight: 600; color: var(--navy); flex: 1; }
+  .case-phase {
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .phase-appeal { background: rgba(180,83,9,0.1); color: var(--gold); }
+  .phase-exam { background: rgba(37,99,235,0.08); color: var(--accent); }
+  .phase-decision { background: rgba(21,128,61,0.08); color: var(--success); }
+  .phase-pending { background: rgba(107,114,128,0.08); color: var(--muted); }
+
+  /* Sections */
+  .section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 100px 48px;
+  }
+  .section-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .section-eyebrow .eyebrow-line { }
+  .section-eyebrow .eyebrow-text { }
+
+  h2 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: clamp(30px, 4vw, 50px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--navy);
+    margin-bottom: 20px;
+  }
+  h2 em { color: var(--accent); font-style: italic; }
+  .section-sub {
+    font-size: 16px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 600px;
+    font-weight: 300;
+    margin-bottom: 16px;
+  }
+
+  /* Workstream cards */
+  .workstream-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 56px;
+  }
+  .ws-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .ws-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .ws-card.legal::before { background: var(--accent); }
+  .ws-card.medical::before { background: #0891B2; }
+  .ws-card.vso::before { background: var(--gold); }
+  .ws-card:hover { box-shadow: 0 8px 28px rgba(27,43,69,0.07); }
+  .ws-type {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .ws-type.legal { color: var(--accent); }
+  .ws-type.medical { color: #0891B2; }
+  .ws-type.vso { color: var(--gold); }
+  .ws-title {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+  .ws-text { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; margin-bottom: 16px; }
+  .ws-features { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .ws-features li { font-size: 12px; color: var(--muted); display: flex; gap: 6px; }
+  .ws-features li::before { content: '→'; color: var(--border); font-weight: 700; flex-shrink: 0; }
+
+  /* Why section */
+  .why-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 56px;
+  }
+  .why-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    transition: all 0.2s;
+  }
+  .why-card:hover { border-color: rgba(37,99,235,0.2); box-shadow: 0 4px 20px rgba(37,99,235,0.05); }
+  .why-title {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+  .why-text { font-size: 14px; color: var(--muted); line-height: 1.7; font-weight: 300; }
+
+  /* Consent highlight */
+  .consent-callout {
+    background: var(--navy);
+    border-radius: 16px;
+    padding: 48px;
+    margin-top: 56px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: center;
+  }
+  .cc-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 12px;
+  }
+  .cc-title {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+  .cc-title em { color: #93C5FD; font-style: italic; }
+  .cc-text { font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.7; font-weight: 300; }
+  .consent-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 220px;
+  }
+  .cf-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+  }
+  .cf-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.4);
+    flex-shrink: 0;
+  }
+  .cf-step.active .cf-num { background: rgba(37,99,235,0.3); border-color: rgba(37,99,235,0.4); color: #93C5FD; }
+  .cf-step.active { color: rgba(255,255,255,0.8); }
+
+  /* Features */
+  .features-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-top: 56px;
+  }
+  .feat-card {
+    background: var(--surface);
+    padding: 24px 20px;
+    transition: background 0.2s;
+  }
+  .feat-card:hover { background: var(--surface2); }
+  .feat-icon { font-size: 20px; margin-bottom: 12px; }
+  .feat-title { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+  .feat-text { font-size: 12px; color: var(--muted); line-height: 1.5; font-weight: 300; }
+
+  /* Signup */
+  .signup-section {
+    background: var(--navy);
+    padding: 100px 48px;
+    text-align: center;
+  }
+  .signup-inner { max-width: 560px; margin: 0 auto; }
+  .signup-section h2 { color: #fff; margin-bottom: 16px; }
+  .signup-sub {
+    font-size: 16px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 40px;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+  .form-row {
+    display: flex;
+    gap: 8px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .form-row input {
+    flex: 1;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    padding: 13px 18px;
+    outline: none;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+  }
+  .form-row input:focus { border-color: rgba(37,99,235,0.5); }
+  .form-row input::placeholder { color: rgba(255,255,255,0.25); }
+  .form-row button {
+    background: var(--accent);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    padding: 13px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+  .form-row button:hover { background: #1d4ed8; }
+  .form-note {
+    font-size: 12px;
+    color: rgba(255,255,255,0.25);
+    margin-top: 16px;
+  }
+  .org-type-selector {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+  .ots-btn {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.4);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .ots-btn:hover { border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.7); }
+  .ots-note { font-size: 11px; color: rgba(255,255,255,0.2); margin-top: 12px; }
+
+  footer {
+    background: #111B2E;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding: 28px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .footer-brand {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 13px;
+    color: rgba(255,255,255,0.25);
+  }
+  .footer-right { font-size: 11px; color: rgba(255,255,255,0.12); }
+
+  @media (max-width: 900px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; padding: 100px 20px 60px; gap: 48px; }
+    .section { padding: 60px 20px; }
+    .workstream-grid { grid-template-columns: 1fr; }
+    .why-grid { grid-template-columns: 1fr; }
+    .features-4 { grid-template-columns: 1fr 1fr; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .consent-callout { grid-template-columns: 1fr; }
+    .signup-section { padding: 60px 20px; }
+    .form-row { flex-direction: column; }
+    footer { flex-direction: column; gap: 12px; padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <span class="nav-logo">Veritas</span>
+    <span class="nav-platform">Platform</span>
+  </div>
+  <div class="nav-links">
+    <a href="#workstreams">Workstreams</a>
+    <a href="#why">Why Veritas</a>
+    <a href="#features">Features</a>
+  </div>
+  <a href="#beta" class="btn-nav">Request Demo</a>
+</nav>
+
+<section class="hero">
+  <div>
+    <div class="hero-eyebrow">
+      <div class="eyebrow-line"></div>
+      <span class="eyebrow-text">Case Management · Veteran Services</span>
+    </div>
+    <h1>Case management built for<br><em>veteran services.</em></h1>
+    <p class="hero-sub">One platform for legal firms, VSOs, and medical providers — with veteran data sovereignty built in from the ground up.</p>
+    <p class="hero-desc">Veritas Platform gives organizations the workflow automation, deadline tracking, and case management they need to serve veterans effectively — while giving veterans explicit control over their data, who sees it, and for how long.</p>
+    <div class="hero-actions">
+      <a href="#beta" class="btn-primary-vp">Request Demo</a>
+      <a href="#why" class="btn-outline-vp">See how it works →</a>
+    </div>
+    <div class="org-types">
+      <span class="org-chip">⚖️ VA Claims Firms</span>
+      <span class="org-chip">🏥 Medical Providers</span>
+      <span class="org-chip">🎖 VSOs</span>
+    </div>
+  </div>
+
+  <div class="dashboard-mock">
+    <div class="dm-header">
+      <div class="dm-logo">Veritas Platform</div>
+      <span class="dm-org-badge">Legal Workstream</span>
+    </div>
+    <div class="dm-body">
+      <div class="kpi-grid">
+        <div class="kpi-card" style="border-top-color:#2563EB;">
+          <div class="kpi-num">24</div>
+          <div class="kpi-lbl">Active cases</div>
+        </div>
+        <div class="kpi-card" style="border-top-color:#B45309;">
+          <div class="kpi-num">3</div>
+          <div class="kpi-lbl">NOD deadlines</div>
+        </div>
+        <div class="kpi-card" style="border-top-color:#15803D;">
+          <div class="kpi-num">8</div>
+          <div class="kpi-lbl">C&P exams</div>
+        </div>
+        <div class="kpi-card" style="border-top-color:#6B7280;">
+          <div class="kpi-num">5</div>
+          <div class="kpi-lbl">Vault requests</div>
+        </div>
+      </div>
+      <div class="case-list">
+        <div class="case-item">
+          <div class="case-dot" style="background:#B45309;"></div>
+          <div class="case-name">Case #4421 — Murphy, J.</div>
+          <span class="case-phase phase-appeal">Appeal In Progress</span>
+        </div>
+        <div class="case-item">
+          <div class="case-dot" style="background:#2563EB;"></div>
+          <div class="case-name">Case #4389 — Torres, M.</div>
+          <span class="case-phase phase-exam">C&P Exam Scheduled</span>
+        </div>
+        <div class="case-item">
+          <div class="case-dot" style="background:#15803D;"></div>
+          <div class="case-name">Case #4402 — Williams, R.</div>
+          <span class="case-phase phase-decision">Decision Received</span>
+        </div>
+        <div class="case-item">
+          <div class="case-dot" style="background:#6B7280;"></div>
+          <div class="case-name">Case #4451 — Chen, A.</div>
+          <span class="case-phase phase-pending">Claim Pending</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="why">
+  <div class="section-eyebrow">
+    <div class="eyebrow-line"></div>
+    <span class="eyebrow-text">Why Veritas Platform exists</span>
+  </div>
+  <h2>Veteran services run on<br>email, fax, and<br><em>missed deadlines.</em></h2>
+  <p class="section-sub">Legal firms handling VA claims track NOD windows in spreadsheets. Medical providers manage DBQs across disconnected clinical systems. VSO representatives coordinate appeals without a shared timeline that every party can see.</p>
+  <p class="section-sub" style="margin-top:16px;">The bigger problem is data. Organizations need access to veteran records to do their jobs — but once a veteran shares their records, they have no visibility into how long that data is retained, who accesses it, or whether it's ever deleted. Existing platforms treat veteran data as the organization's asset, not the veteran's.</p>
+  <p class="section-sub" style="margin-top:16px;">Veritas Platform was built to solve both problems simultaneously: give organizations the workflow infrastructure they need, and give veterans explicit control over the data they share to get that help.</p>
+
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="why-title">Context-aware workflows</div>
+      <p class="why-text">The workflow engine generates step-by-step plans tailored to each organization's type and the specific case context. Legal cases get litigation steps. Medical cases get DBQ workflows. VSO cases get benefits navigation. Mental health codes and musculoskeletal codes trigger automatic adjustments.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-title">Unified timeline</div>
+      <p class="why-text">Every event on a case — VA submissions, C&P exams, decisions, correspondence, document receipts, deadlines — in one chronological view. The VA phase (pending, exam, awaiting decision, appeal) is automatically detected from the timeline.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-title">Deadline tracking that doesn't slip</div>
+      <p class="why-text">NOD windows, BVA appeal deadlines, evidence submission dates, SOC/SSOC deadlines. Status: upcoming, at-risk, overdue, completed. The deadlines a missed VA claims firm can never get back.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-title">AI that respects data sensitivity</div>
+      <p class="why-text">Organizations handling sensitive veteran data can run AI entirely on-premises via LM Studio — no cloud, no external API calls. Cloud providers (Anthropic, OpenAI-compatible) available with automatic failover. Your choice where processing happens.</p>
+    </div>
+  </div>
+
+  <div class="consent-callout">
+    <div>
+      <div class="cc-label">Data sovereignty</div>
+      <div class="cc-title">Veterans control<br>what you <em>receive.</em></div>
+      <p class="cc-text">Data arrives on the platform only through explicit veteran consent — not from a third-party data broker, not from a background sync. Every piece of veteran data has a retention policy and a scheduled deletion date enforced at the database layer, not just policy documents.</p>
+    </div>
+    <div class="consent-flow">
+      <div class="cf-step active">
+        <div class="cf-num">1</div>
+        Veteran shares bundle from their device
+      </div>
+      <div class="cf-step active">
+        <div class="cf-num">2</div>
+        Share request arrives in your vault inbox
+      </div>
+      <div class="cf-step active">
+        <div class="cf-num">3</div>
+        Your org accepts — case created automatically
+      </div>
+      <div class="cf-step">
+        <div class="cf-num">4</div>
+        Retention policy enforces auto-deletion date
+      </div>
+      <div class="cf-step">
+        <div class="cf-num">5</div>
+        Full audit trail — every access logged
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0;" id="workstreams">
+  <div class="section-eyebrow">
+    <div class="eyebrow-line"></div>
+    <span class="eyebrow-text">Workstreams</span>
+  </div>
+  <h2>One platform.<br>Three workflows.</h2>
+  <p class="section-sub">The workflow engine, UI, and tools adapt to your organization type. Legal firms, medical providers, and VSOs get purpose-built workflows — not a generic task manager they have to configure themselves.</p>
+
+  <div class="workstream-grid">
+    <div class="ws-card legal">
+      <div class="ws-type legal">Legal</div>
+      <div class="ws-title">VA Claims Firms</div>
+      <p class="ws-text">Litigation-focused workflows with evidence tracking, deadline management, and correspondence threading.</p>
+      <ul class="ws-features">
+        <li>NOD, BVA, CAVC deadline tracker</li>
+        <li>Evidence review and legal triage workflow</li>
+        <li>Correspondence (VA letters, filings, calls)</li>
+        <li>ROM evidence flagging for musculoskeletal cases</li>
+        <li>Quality review step before submission</li>
+      </ul>
+    </div>
+    <div class="ws-card medical">
+      <div class="ws-type medical">Medical</div>
+      <div class="ws-title">Medical Providers</div>
+      <p class="ws-text">Clinical documentation workflows built around the DBQ lifecycle and C&P exam coordination.</p>
+      <ul class="ws-features">
+        <li>DBQ tracker (not_started → submitted)</li>
+        <li>C&P exam scheduling and prep workflow</li>
+        <li>Clinical review and evidence staging</li>
+        <li>Audiological and sleep study flagging</li>
+        <li>Medical evidence organization</li>
+      </ul>
+    </div>
+    <div class="ws-card vso">
+      <div class="ws-type vso">VSO</div>
+      <div class="ws-title">Veteran Service Orgs</div>
+      <p class="ws-text">Benefits navigation and advocacy workflows with mental health awareness built in.</p>
+      <ul class="ws-features">
+        <li>Benefits tracker across claim types</li>
+        <li>Needs assessment and benefits triage</li>
+        <li>Mental health documentation review (9xxx codes)</li>
+        <li>VSO guidance and documentation workflow</li>
+        <li>Appeal coordination</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0;" id="features">
+  <div class="section-eyebrow">
+    <div class="eyebrow-line"></div>
+    <span class="eyebrow-text">Platform features</span>
+  </div>
+  <h2>Built for the full<br>case lifecycle.</h2>
+
+  <div class="features-4">
+    <div class="feat-card">
+      <div class="feat-icon">🔄</div>
+      <div class="feat-title">Workflow engine</div>
+      <p class="feat-text">Context-aware plan generation. 3 workstream groups. Auto-adjusts for missing evidence, high priority, mental health codes.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📅</div>
+      <div class="feat-title">Case timeline</div>
+      <p class="feat-text">Unified chronological view. System + manual events. VA phase auto-detection. Custom event types per org.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🏛</div>
+      <div class="feat-title">Multi-tenant</div>
+      <p class="feat-text">Full tenant isolation. API key auth. Trial → active lifecycle. Per-tenant config. Suspend/reactivate.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📊</div>
+      <div class="feat-title">Kanban workstreams</div>
+      <p class="feat-text">Todo → in progress → blocked → done. Team member assignment. Timeline visible alongside tasks.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🤖</div>
+      <div class="feat-title">AI playbooks</div>
+      <p class="feat-text">Auto-generate support playbooks from resolved tickets. Trigger matching. Approval-gated execution.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📚</div>
+      <div class="feat-title">4,000+ VA codes</div>
+      <p class="feat-text">Complete VA diagnostic code reference organized by body system. Rating levels and clinical notes included.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🔐</div>
+      <div class="feat-title">Audit trail</div>
+      <p class="feat-text">Every action logged. Time-limited audit access sessions. Cross-tenant admin view. Vault-specific access log.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🔒</div>
+      <div class="feat-title">Retention policies</div>
+      <p class="feat-text">Standard (30d), extended (90d), permanent, custom, transfer-only. Enforced at the database layer.</p>
+    </div>
+  </div>
+</section>
+
+<section class="signup-section" id="beta">
+  <div class="signup-inner">
+    <div class="section-eyebrow" style="justify-content:center;">
+      <div class="eyebrow-line" style="background:rgba(255,255,255,0.2);"></div>
+      <span class="eyebrow-text" style="color:rgba(255,255,255,0.4);">Early access</span>
+    </div>
+    <h2>Request a demo.</h2>
+    <p class="signup-sub">Veritas Platform is in beta and we're onboarding our first organizations. Tell us your org type and we'll reach out to set up a walkthrough of the workflows specific to your team.</p>
+    <form action="https://formsubmit.co/beta@gil.consulting" method="POST">
+      <input type="hidden" name="_subject" value="Beta Request — Veritas Platform">
+      <input type="hidden" name="_captcha" value="false">
+      <div class="form-row">
+        <input type="email" name="email" placeholder="your@organization.com" required>
+        <button type="submit">Request demo</button>
+      </div>
+    </form>
+    <div class="org-type-selector">
+      <button class="ots-btn" type="button">⚖️ VA Claims Firm</button>
+      <button class="ots-btn" type="button">🏥 Medical Provider</button>
+      <button class="ots-btn" type="button">🎖 VSO</button>
+    </div>
+    <p class="ots-note">Select your org type above and include it in your message</p>
+    <p class="form-note" style="margin-top:20px;">Beta is free for founding organizations. We'll reach out personally within 48 hours.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand">Veritas Platform — Global Intelligence Laboratory · Veteran-Owned SDVOSB</div>
+  <div class="footer-right">© 2026 · gil.report</div>
+</footer>
+
+</body>
+</html>

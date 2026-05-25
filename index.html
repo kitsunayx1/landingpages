@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Intelligence Laboratory — AI-Native Software Studio</title>
+<meta name="description" content="Veteran-owned software studio building AI-native apps for professionals, communities, and the underserved. Mobile, desktop, and web — shipped with intention.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #07070a;
+    --surface: #0d0d12;
+    --surface2:#12121a;
+    --gold:    #C9A84C;
+    --gold-dim: rgba(201,168,76,0.15);
+    --gold-glow: rgba(201,168,76,0.06);
+    --teal:    #00b4c8;
+    --text:    rgba(255,255,255,0.92);
+    --muted:   rgba(255,255,255,0.45);
+    --faint:   rgba(255,255,255,0.12);
+    --border:  rgba(255,255,255,0.07);
+    --border-gold: rgba(201,168,76,0.25);
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Global scanline */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent, transparent 2px,
+      rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ─── NAV ─────────────────────────────────────────────── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 500;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    background: rgba(7,7,10,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+  }
+  .nav-logo-mark {
+    width: 32px; height: 32px;
+    border: 1.5px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    position: relative;
+  }
+  .nav-logo-mark::before {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border: 1px solid rgba(201,168,76,0.3);
+  }
+  .nav-logo-text {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .nav-logo-text span { color: var(--gold); }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+
+  .nav-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    border: 1px solid var(--border-gold);
+    padding: 4px 10px;
+    background: var(--gold-glow);
+  }
+
+  /* ─── HERO ────────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 48px 80px;
+    overflow: hidden;
+  }
+
+  /* grid background */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 30%, transparent 100%);
+    pointer-events: none;
+  }
+
+  /* large watermark */
+  .hero-watermark {
+    position: absolute;
+    bottom: -40px;
+    right: -80px;
+    font-family: 'Orbitron', monospace;
+    font-size: 28vw;
+    font-weight: 900;
+    color: rgba(201,168,76,0.025);
+    letter-spacing: -0.05em;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+  }
+
+  .hero-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+  .hero-eyebrow-line {
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+  }
+  .hero-eyebrow-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(36px, 5.5vw, 76px);
+    font-weight: 900;
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin-bottom: 32px;
+  }
+  h1 em {
+    font-style: normal;
+    color: var(--gold);
+  }
+  h1 .h1-dim { color: var(--faint); }
+
+  .hero-sub {
+    font-size: clamp(16px, 1.8vw, 20px);
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 620px;
+    margin-bottom: 48px;
+    font-weight: 300;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    margin-bottom: 56px;
+    flex-wrap: wrap;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .stat-n {
+    font-family: 'Orbitron', monospace;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: -0.02em;
+  }
+  .stat-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--gold);
+    color: #07070a;
+    padding: 14px 32px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+    border: 1px solid var(--gold);
+  }
+  .btn-primary:hover {
+    background: transparent;
+    color: var(--gold);
+    transform: translateY(-1px);
+  }
+  .btn-secondary {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 13px 28px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover {
+    color: var(--text);
+    border-color: rgba(255,255,255,0.2);
+  }
+
+  /* ─── DIVIDER ──────────────────────────────────────────── */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    position: relative;
+  }
+  .divider::after {
+    content: '';
+    position: absolute;
+    left: 48px;
+    top: 0;
+    width: 80px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  /* ─── SECTION BASE ─────────────────────────────────────── */
+  section {
+    padding: 96px 48px;
+  }
+  .section-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: var(--gold);
+    flex-shrink: 0;
+  }
+  .section-heading {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(24px, 3vw, 42px);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+  .section-heading em { font-style: normal; color: var(--gold); }
+  .section-body {
+    font-size: 16px;
+    color: var(--muted);
+    line-height: 1.8;
+    max-width: 560px;
+    font-weight: 300;
+  }
+
+  /* ─── MISSION ──────────────────────────────────────────── */
+  #mission {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .mission-left {}
+  .mission-right {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .mission-principle {
+    border-top: 1px solid var(--border);
+    padding: 24px 0;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .mission-principle:last-child { border-bottom: 1px solid var(--border); }
+  .mp-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .mp-body {}
+  .mp-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .mp-text {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* ─── PRODUCTS ─────────────────────────────────────────── */
+  #products {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .products-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 64px;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+  .product-card {
+    background: var(--surface);
+    padding: 36px 32px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .product-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 2px;
+    height: 100%;
+    background: var(--gold);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.3s ease;
+  }
+  .product-card:hover { background: var(--surface2); }
+  .product-card:hover::before { transform: scaleY(1); }
+
+  .pc-track {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    display: inline-block;
+    width: fit-content;
+  }
+  .track-security { color: #ff2d4a; border: 1px solid rgba(255,45,74,0.25); background: rgba(255,45,74,0.05); }
+  .track-intel    { color: var(--teal); border: 1px solid rgba(0,180,200,0.25); background: rgba(0,180,200,0.05); }
+  .track-ops      { color: var(--gold); border: 1px solid var(--border-gold); background: var(--gold-glow); }
+  .track-civic    { color: #a78bfa; border: 1px solid rgba(167,139,250,0.25); background: rgba(167,139,250,0.05); }
+  .track-consumer { color: #34d399; border: 1px solid rgba(52,211,153,0.25); background: rgba(52,211,153,0.05); }
+
+  .pc-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--text);
+    letter-spacing: 0.05em;
+  }
+  .pc-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+    font-weight: 300;
+    flex: 1;
+  }
+  .pc-link {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .product-card:hover .pc-link { opacity: 1; }
+  .pc-link::after { content: '→'; }
+
+  /* ─── WHO WE ARE ───────────────────────────────────────── */
+  #who {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 96px;
+    align-items: start;
+  }
+  .who-left {}
+  .who-right {
+    padding-top: 56px;
+  }
+  .sdvosb-block {
+    border: 1px solid var(--border-gold);
+    background: var(--gold-glow);
+    padding: 28px 32px;
+    margin-bottom: 32px;
+    position: relative;
+  }
+  .sdvosb-block::before {
+    content: 'VERIFIED';
+    position: absolute;
+    top: -8px; right: 20px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    background: var(--bg);
+    padding: 0 8px;
+  }
+  .sdvosb-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .sdvosb-text {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+  .manifesto {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.9;
+    font-weight: 300;
+    font-style: italic;
+    border-left: 2px solid var(--border-gold);
+    padding-left: 24px;
+    margin-bottom: 32px;
+  }
+  .manifesto strong {
+    font-style: normal;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .who-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .who-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .who-item:first-child { border-top: 1px solid var(--border); }
+  .wi-icon {
+    width: 36px; height: 36px;
+    border: 1px solid var(--border-gold);
+    background: var(--gold-glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--gold);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .wi-body {}
+  .wi-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+  .wi-text {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* ─── CONTACT / BETA ───────────────────────────────────── */
+  #contact {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  #contact::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+  .contact-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .contact-heading {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(24px, 3vw, 40px);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .contact-heading em { font-style: normal; color: var(--gold); }
+  .contact-sub {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.7;
+    font-weight: 300;
+    margin-bottom: 40px;
+  }
+  .form-row {
+    display: flex;
+    gap: 0;
+    max-width: 480px;
+    margin: 0 auto 16px;
+  }
+  .form-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-right: none;
+    color: var(--text);
+    padding: 14px 20px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input::placeholder { color: var(--muted); }
+  .form-input:focus { border-color: var(--border-gold); }
+  .form-submit {
+    background: var(--gold);
+    color: #07070a;
+    border: 1px solid var(--gold);
+    padding: 14px 28px;
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .form-submit:hover { background: transparent; color: var(--gold); }
+  .form-note {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+  }
+
+  /* ─── FOOTER ───────────────────────────────────────────── */
+  footer {
+    padding: 32px 48px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .footer-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+  }
+  .footer-logo span { color: var(--gold); }
+  .footer-copy {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--faint);
+  }
+  .footer-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .footer-right a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-right a:hover { color: var(--gold); }
+
+  /* ─── ANIMATIONS ───────────────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero-content > * {
+    animation: fadeUp 0.7s ease both;
+  }
+  .hero-eyebrow    { animation-delay: 0.1s; }
+  h1               { animation-delay: 0.2s; }
+  .hero-sub        { animation-delay: 0.32s; }
+  .hero-stats      { animation-delay: 0.44s; }
+  .hero-actions    { animation-delay: 0.54s; }
+
+  /* ─── RESPONSIVE ───────────────────────────────────────── */
+  @media (max-width: 900px) {
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    section { padding: 64px 24px; }
+    .hero { padding: 100px 24px 64px; }
+    #mission, #who { grid-template-columns: 1fr; gap: 48px; }
+    .products-grid { grid-template-columns: 1fr 1fr; }
+    .hero-stats { gap: 28px; }
+    footer { padding: 24px; }
+  }
+  /* ─── STEALTH CARDS ──────────────────────────────────────── */
+  .track-stealth {
+    color: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.08);
+    background: transparent;
+  }
+  .product-card--stealth {
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+  .product-card--stealth::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 8px,
+      rgba(255,255,255,0.015) 8px,
+      rgba(255,255,255,0.015) 9px
+    );
+    pointer-events: none;
+  }
+  .product-card--stealth:hover { background: var(--surface); }
+  .product-card--stealth:hover::before { transform: none; }
+  .stealth-name {
+    font-family: 'Share Tech Mono', monospace !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    letter-spacing: 0.25em !important;
+    color: rgba(255,255,255,0.18) !important;
+  }
+  .stealth-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    padding: 4px 0;
+  }
+  .stealth-line {
+    height: 8px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    width: 100%;
+  }
+  .stealth-line--short { width: 55%; }
+  .stealth-line--med   { width: 78%; }
+  .stealth-note {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.2);
+    margin-top: 8px;
+  }
+
+  /* ─── OUTREACH CARD ──────────────────────────────────────── */
+  .outreach-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 48px;
+    margin-top: 1px;
+    background: var(--surface);
+    border: 1px solid var(--border-gold);
+    padding: 44px 48px;
+    text-decoration: none;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .outreach-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+  }
+  .outreach-card:hover { background: var(--surface2); }
+  .outreach-left { flex: 1; }
+  .outreach-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .outreach-tag::before {
+    content: '';
+    display: inline-block;
+    width: 20px; height: 1px;
+    background: var(--gold);
+  }
+  .outreach-heading {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(18px, 2.2vw, 28px);
+    font-weight: 900;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+  .outreach-heading span { color: var(--gold); }
+  .outreach-body {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.8;
+    font-weight: 300;
+    max-width: 580px;
+  }
+  .outreach-right {
+    flex-shrink: 0;
+  }
+  .outreach-cta {
+    border: 1px solid var(--border-gold);
+    background: var(--gold-glow);
+    padding: 28px 36px;
+    text-align: center;
+    min-width: 200px;
+  }
+  .outreach-cta-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .outreach-cta-text {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.3;
+  }
+  .outreach-cta-link {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+  }
+  @media (max-width: 768px) {
+    .outreach-card { flex-direction: column; padding: 32px 24px; }
+    .outreach-right { width: 100%; }
+    .outreach-cta { min-width: unset; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ──────────────────────────────────────────────────── -->
+<nav>
+  <a href="/" class="nav-logo">
+    <div class="nav-logo-mark">GIL</div>
+    <div class="nav-logo-text"><span>Global</span> Intelligence Laboratory</div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#mission">Mission</a></li>
+    <li><a href="#products">Products</a></li>
+    <li><a href="#who">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-badge">SDVOSB Pending · Veteran-Owned</div>
+</nav>
+
+<!-- ─── HERO ──────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-watermark">GIL</div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <div class="hero-eyebrow-line"></div>
+      <div class="hero-eyebrow-text">Global Intelligence Laboratory</div>
+    </div>
+    <h1>
+      A studio that<br>
+      ships <em>real software.</em><br>
+      <span class="h1-dim">For real people.</span>
+    </h1>
+    <p class="hero-sub">
+      GIL is an independent software studio building AI-native apps across mobile, desktop, and web. We find gaps — problems that deserve better tools than what exists — and we build them with intention.
+    </p>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-n">12+</div>
+        <div class="stat-label">Products in Dev</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n">6</div>
+        <div class="stat-label">Verticals</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n">100%</div>
+        <div class="stat-label">Veteran Owned</div>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <a href="#products" class="btn-primary">View Products</a>
+      <a href="#contact" class="btn-secondary">Early Access</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ─── MISSION ───────────────────────────────────────────────── -->
+<section id="mission">
+  <div class="mission-left">
+    <div class="section-label">Why We Exist</div>
+    <h2 class="section-heading">
+      We build what<br>should <em>already exist.</em>
+    </h2>
+    <p class="section-body">
+      Most software is built for the median use case, the largest market, the easiest customer. We look in the opposite direction — niches with real problems and no good answer — and build there with the same quality a large studio would bring to a flagship product.
+    </p>
+  </div>
+  <div class="mission-right">
+    <div class="mission-principle">
+      <div class="mp-num">01</div>
+      <div class="mp-body">
+        <div class="mp-title">AI-Native by Default</div>
+        <div class="mp-text">Every product is designed from the ground up for AI-augmented workflows — not retrofitted with a chatbot. Intelligence is load-bearing architecture, not a feature checkbox.</div>
+      </div>
+    </div>
+    <div class="mission-principle">
+      <div class="mp-num">02</div>
+      <div class="mp-body">
+        <div class="mp-title">Offline-First. Privacy-First.</div>
+        <div class="mp-text">Where users handle sensitive data, it stays local — on their hardware, under their control. Cloud is a choice, not a requirement. We design for the person, not the data pipeline.</div>
+      </div>
+    </div>
+    <div class="mission-principle">
+      <div class="mp-num">03</div>
+      <div class="mp-body">
+        <div class="mp-title">Depth Over Breadth</div>
+        <div class="mp-text">We'd rather build one tool that becomes indispensable to a specific community than ship ten average ones. Every product is designed for a real person with a real workflow.</div>
+      </div>
+    </div>
+    <div class="mission-principle">
+      <div class="mp-num">04</div>
+      <div class="mp-body">
+        <div class="mp-title">Veteran-Owned. Mission-Driven.</div>
+        <div class="mp-text">As a Service-Disabled Veteran-Owned Small Business, accountability isn't a brand value — it's a habit. We build software we'd stake our name on, because we do.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ─── PRODUCTS ──────────────────────────────────────────────── -->
+<section id="products">
+  <div class="products-header">
+    <div>
+      <div class="section-label">The Portfolio</div>
+      <h2 class="section-heading">Products <em>in development.</em></h2>
+    </div>
+    <p style="font-size:13px;color:var(--muted);max-width:300px;line-height:1.7;font-weight:300;">
+      All products are in active development. Early access and beta programs are open — click any card to learn more.
+    </p>
+  </div>
+  <div class="products-grid">
+
+    <a href="ghost.html" class="product-card">
+      <div class="pc-track track-security">Training</div>
+      <div class="pc-name">GHOST</div>
+      <div class="pc-desc">Structured cybersecurity training for career-changers and professionals. 195 modules across beginner, blue team, and advanced tracks. Mobile-first, self-paced.</div>
+      <div class="pc-link pc-soon">Coming Soon</div>
+    </a>
+
+    <a href="#contact" class="product-card">
+      <div class="pc-track track-intel">Privacy</div>
+      <div class="pc-name">HEKATE</div>
+      <div class="pc-desc">Personal digital privacy for everyday people. Understand your exposure, monitor your footprint, and take back control — without needing a security background.</div>
+      <div class="pc-link pc-soon">Coming Soon</div>
+    </a>
+
+    <a href="#contact" class="product-card">
+      <div class="pc-track track-civic">Civic</div>
+      <div class="pc-name">MACHINE</div>
+      <div class="pc-desc">Multi-agent public accountability platform. VOTE TRACK, LOBBY LENS, and EQUITY WATCH — 100% public data sources, surfaced automatically and in plain language.</div>
+      <div class="pc-link pc-soon">Coming Soon</div>
+    </a>
+
+    <a href="veritas.html" class="product-card">
+      <div class="pc-track track-consumer">Veterans</div>
+      <div class="pc-name">VERITAS</div>
+      <div class="pc-desc">Privacy-first records and disability claim preparation app for veterans. Organizes service history, medical records, and VA documentation — locally, on-device.</div>
+      <div class="pc-link pc-soon">Coming Soon</div>
+    </a>
+
+    <a href="veritas-platform.html" class="product-card">
+      <div class="pc-track track-consumer">Veterans · B2B</div>
+      <div class="pc-name">VERITAS PLATFORM</div>
+      <div class="pc-desc">Multi-tenant SaaS for VSOs, legal firms, and medical providers. Full case management, RBAC, secure document handling, and AI-assisted narrative drafting.</div>
+      <div class="pc-link pc-soon">Coming Soon</div>
+    </a>
+
+    <a href="galley.html" class="product-card">
+      <div class="pc-track track-consumer">Maritime</div>
+      <div class="pc-name">GALLEY</div>
+      <div class="pc-desc">Offline-first iOS app for charter yacht chefs. Menu generation, guest allergy tracking, provision management, and shopping lists — no marina Wi-Fi required.</div>
+      <div class="pc-link pc-soon">Coming Soon</div>
+    </a>
+
+    <a href="foundrybase.html" class="product-card">
+      <div class="pc-track track-ops">Business</div>
+      <div class="pc-name">FOUNDRYBASE</div>
+      <div class="pc-desc">macOS-native LLC management for solo operators. Clients, projects, documents, and compliance tracking — built with a precision instrument aesthetic. No subscriptions.</div>
+      <div class="pc-link pc-soon">Coming Soon</div>
+    </a>
+
+    <a href="charter.html" class="product-card">
+      <div class="pc-track track-consumer">Community</div>
+      <div class="pc-name">CHARTER</div>
+      <div class="pc-desc">HOA management SaaS for small associations. Board portal, resident mobile app, financials, document library, and bilingual support — affordable at any scale.</div>
+      <div class="pc-link pc-soon">Coming Soon</div>
+    </a>
+
+    <a href="maker.html" class="product-card">
+      <div class="pc-track track-consumer">Consumer</div>
+      <div class="pc-name">MAKEROS</div>
+      <div class="pc-desc">Craft and maker project management for knitters, crocheters, and sewers. Pattern storage, yarn inventory, WIP tracking, and AI-powered project guidance.</div>
+      <div class="pc-link pc-soon">Coming Soon</div>
+    </a>
+
+    <a href="council.html" class="product-card">
+      <div class="pc-track track-ops">AI Tools</div>
+      <div class="pc-name">COUNCIL</div>
+      <div class="pc-desc">A panel of 57 AI personas across 8 specialized councils debates your document. CEO synthesizes a final verdict. Native macOS.</div>
+      <div class="pc-link">Learn More →</div>
+    </a>
+
+    <a href="shipdeck.html" class="product-card">
+      <div class="pc-track track-ops">Dev Tools</div>
+      <div class="pc-name">SHIPDECK</div>
+      <div class="pc-desc">Native macOS app for tracking iOS/Android App Store submissions. Checklists, screenshots, review logs, and privacy policy management. All local.</div>
+      <div class="pc-link">Learn More →</div>
+    </a>
+
+    <a href="calldesk.html" class="product-card">
+      <div class="pc-track track-consumer">Finance</div>
+      <div class="pc-name">CALLDESK</div>
+      <div class="pc-desc">Covered call and wheel strategy tracker for macOS. Connects to Alpaca, real-time strike data, gate checks, and AI trade explainers. Not financial advice.</div>
+      <div class="pc-link">Learn More →</div>
+    </a>
+
+    <a href="sentri.html" class="product-card">
+      <div class="pc-track track-security">Security</div>
+      <div class="pc-name">SENTRI</div>
+      <div class="pc-desc">Free, open-source insider risk and user behavior intelligence for M365 and Google Workspace. No cloud. No agents. Runs on your machine.</div>
+      <div class="pc-link">Learn More →</div>
+    </a>
+
+    <a href="hephaestus.html" class="product-card">
+      <div class="pc-track track-security">Security</div>
+      <div class="pc-name">HEPHAESTUS</div>
+      <div class="pc-desc">Detection engineering forge for macOS. Converts Sigma and SPL rules into Atomic Red Team tests and all 5 SIEM translations via Claude AI. Authorized use only.</div>
+      <div class="pc-link">Learn More →</div>
+    </a>
+
+    <a href="preflight.html" class="product-card">
+      <div class="pc-track track-security">Dev Tools</div>
+      <div class="pc-name">PREFLIGHT</div>
+      <div class="pc-desc">Local security scanner for AI-generated (vibe-coded) projects. Finds secrets, CVEs, and code quality issues entirely on your Mac — no upload required.</div>
+      <div class="pc-link">Learn More →</div>
+    </a>
+
+    <a href="chronicle.html" class="product-card">
+      <div class="pc-track track-ops">Productivity</div>
+      <div class="pc-name">CHRONICLE</div>
+      <div class="pc-desc">Native macOS document writing app with a professional template library and DOCX export. No subscription. No cloud. Your documents stay on your Mac.</div>
+      <div class="pc-link">Learn More →</div>
+    </a>
+
+    <a href="civibridge.html" class="product-card">
+      <div class="pc-track track-civic">Civic</div>
+      <div class="pc-name">CIVIBRIDGE</div>
+      <div class="pc-desc">macOS app for managing FOIA requests, civic documents, and local government interactions. All data stays local. No account required.</div>
+      <div class="pc-link">Learn More →</div>
+    </a>
+
+    <a href="umbra.html" class="product-card">
+      <div class="pc-track track-security">Security</div>
+      <div class="pc-name">UMBRA</div>
+      <div class="pc-desc">OPSEC-grade text processing for analysts and operators. macOS Services menu integration. Zero network calls. Nothing leaves your machine.</div>
+      <div class="pc-link">Learn More →</div>
+    </a>
+
+    <a href="pulse.html" class="product-card">
+      <div class="pc-track track-ops">Marketing</div>
+      <div class="pc-name">PULSE</div>
+      <div class="pc-desc">Local-first broadcast and marketing OS for macOS. Draft, schedule, and measure content alongside SEO audits and GSC/GA4 analytics — no SaaS bill.</div>
+      <div class="pc-link">Learn More →</div>
+    </a>
+
+    <a href="beacon.html" class="product-card">
+      <div class="pc-track track-security">Security</div>
+      <div class="pc-name">BEACON</div>
+      <div class="pc-desc">AI-native home and small office network security monitor. Watches network behavior, AI skill files, IoT inventory, and CVE exposure. Runs on Raspberry Pi.</div>
+      <div class="pc-link">Learn More →</div>
+    </a>
+
+    <a href="familycare.html" class="product-card">
+      <div class="pc-track track-consumer">Family</div>
+      <div class="pc-name">FAMILYCARE</div>
+      <div class="pc-desc">Web and mobile app for family care coordination. Shared calendars, medication tracking, care notes, and document storage for families managing complex care.</div>
+      <div class="pc-link">Learn More →</div>
+    </a>
+
+    <a href="teachingcraft.html" class="product-card">
+      <div class="pc-track track-consumer">Education</div>
+      <div class="pc-name">TEACHINGCRAFT</div>
+      <div class="pc-desc">Web-based teaching platform for K-12 and higher education. Course creation, student progress tracking, and assignment management. Less admin, more teaching.</div>
+      <div class="pc-link">Learn More →</div>
+    </a>
+
+    <a href="bifrost.html" class="product-card">
+      <div class="pc-track track-security">Security</div>
+      <div class="pc-name">BIFROST</div>
+      <div class="pc-desc">AI-native home network security appliance. Firewall, WireGuard VPN, Suricata IDS/IPS, Pi-hole, and local AI — controlled via iOS/Android app. Hardware Q1 2027.</div>
+      <div class="pc-link">Learn More →</div>
+    </a>
+
+    <a href="vouch.html" class="product-card">
+      <div class="pc-track track-consumer">Commerce</div>
+      <div class="pc-name">VOUCH</div>
+      <div class="pc-desc">Tamper-evident video proof of item condition at packaging. Cryptographic seals, neutral escrow, and dispute-ready evidence for peer-to-peer commerce.</div>
+      <div class="pc-link">Learn More →</div>
+    </a>
+
+    <a href="meridian.html" class="product-card">
+      <div class="pc-track track-security">Security</div>
+      <div class="pc-name">MERIDIAN</div>
+      <div class="pc-desc">AI-native SIEM and security operations platform. Dual-lane detection, LLM analyst, and automated response. Self-hosted on your infrastructure.</div>
+      <div class="pc-link">Learn More →</div>
+    </a>
+
+    <a href="zanshin.html" class="product-card">
+      <div class="pc-track track-ops">Dev Tools</div>
+      <div class="pc-name">ZANSHIN</div>
+      <div class="pc-desc">Native macOS terminal workspace. Three-panel SwiftUI layout with LLM-aware context, Obsidian integration, session capture, and custom themes. For developers who live in the terminal.</div>
+      <div class="pc-link">Learn More →</div>
+    </a>
+
+    <a href="carbon.html" class="product-card">
+      <div class="pc-track track-security">Security</div>
+      <div class="pc-name">CARBON</div>
+      <div class="pc-desc">Local-first threat intelligence workbench. IOC management, MITRE ATT&CK mapping, actor profiling, dark web monitoring, and intelligence reports — all on your machine.</div>
+      <div class="pc-link">Learn More →</div>
+    </a>
+
+  </div>
+
+  <!-- COMMUNITY BUILDER CALLOUT -->
+  <div class="community-banner">
+    <div class="community-inner">
+      <div class="community-left">
+        <div class="community-kicker">Open to the Community</div>
+        <h3 class="community-title">Got an idea for a niche that tech forgot?</h3>
+        <p class="community-body">
+          Every community deserves software built for how they actually work — not a generic tool they're forced to adapt to. If you represent an underserved group, have an idea that solves a real problem, or just want to talk through what's possible — reach out. We're here to help you think it through, design it, and build it.
+        </p>
+        <p class="community-body" style="margin-top: 14px;">
+          <strong>Your idea stays yours.</strong> We operate under strict confidentiality — no NDAs required on your end to have a conversation. We're not here to take your concept and run with it. We're here to help you succeed with it.
+        </p>
+        <a href="#contact" class="community-cta">Start a Conversation →</a>
+      </div>
+      <div class="community-right">
+        <div class="community-values">
+          <div class="community-value">
+            <span class="cv-icon">◈</span>
+            <div>
+              <div class="cv-title">All conversations are private</div>
+              <div class="cv-desc">What you share with us stays with us. No pitch decks passed around, no ideas borrowed.</div>
+            </div>
+          </div>
+          <div class="community-value">
+            <span class="cv-icon">◈</span>
+            <div>
+              <div class="cv-title">Your idea, your ownership</div>
+              <div class="cv-desc">We help you build it — the IP, the product, and the future belong to you.</div>
+            </div>
+          </div>
+          <div class="community-value">
+            <span class="cv-icon">◈</span>
+            <div>
+              <div class="cv-title">No commitment to start</div>
+              <div class="cv-desc">An initial conversation costs nothing. We scope together before anything is agreed to.</div>
+            </div>
+          </div>
+          <div class="community-value">
+            <span class="cv-icon">◈</span>
+            <div>
+              <div class="cv-title">Security reviewed from day one</div>
+              <div class="cv-desc">Every project we touch is built with privacy and security as first principles — not afterthoughts.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .pc-soon {
+      color: var(--muted) !important;
+      border-color: rgba(255,255,255,0.08) !important;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+    }
+    /* ─── COMMUNITY BANNER ─── */
+    .community-banner {
+      margin-top: 48px;
+      border: 1px solid rgba(201,168,76,0.2);
+      border-top: 2px solid var(--gold);
+      background: linear-gradient(135deg, rgba(201,168,76,0.04) 0%, transparent 50%);
+    }
+    .community-inner {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 0;
+    }
+    .community-left {
+      padding: 56px 48px;
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    .community-right {
+      padding: 56px 48px;
+    }
+    .community-kicker {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .community-title {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(18px, 2.2vw, 26px);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 20px;
+      letter-spacing: -0.01em;
+    }
+    .community-body {
+      font-size: 15px;
+      line-height: 1.75;
+      color: var(--muted);
+    }
+    .community-body strong { color: var(--text); font-weight: 500; }
+    .community-cta {
+      display: inline-block;
+      margin-top: 28px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      color: var(--gold);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(201,168,76,0.3);
+      padding-bottom: 3px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .community-cta:hover { border-color: var(--gold); color: var(--text); }
+    .community-values {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    .community-value {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .cv-icon {
+      color: var(--gold);
+      font-size: 16px;
+      margin-top: 2px;
+      opacity: 0.7;
+      flex-shrink: 0;
+    }
+    .cv-title {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--text);
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+    .cv-desc {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+    @media (max-width: 900px) {
+      .community-inner { grid-template-columns: 1fr; }
+      .community-left { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); padding: 36px 24px; }
+      .community-right { padding: 36px 24px; }
+    }
+  </style>
+
+  <!-- FULL-WIDTH OUTREACH CARD -->
+  <a href="#contact" class="outreach-card">
+    <div class="outreach-left">
+      <div class="outreach-tag">Builder-to-Builder</div>
+      <div class="outreach-heading">Shipping something? <span>Let's make sure it holds.</span></div>
+      <p class="outreach-body">
+        If you're an indie developer, startup, or small team getting close to launch — we offer security reviews and penetration testing to make sure what you're shipping doesn't hand a malicious actor the keys. We've been on both sides of that equation. We know what to look for.
+        This is a beta offering. Reach out for scoping, custom pricing, and availability.
+      </p>
+    </div>
+    <div class="outreach-right">
+      <div class="outreach-cta">
+        <div class="outreach-cta-label">Beta Program</div>
+        <div class="outreach-cta-text">Security Review &amp; Pentest</div>
+        <div class="outreach-cta-link">Get in touch →</div>
+      </div>
+    </div>
+  </a>
+
+</section>
+
+<!-- ─── WHO WE ARE ─────────────────────────────────────────────── -->
+<section id="who">
+  <div class="who-left">
+    <div class="section-label">About GIL</div>
+    <h2 class="section-heading">
+      Independent studio.<br><em>No compromises.</em>
+    </h2>
+
+    <div class="manifesto">
+      We started GIL to build software that <strong>actually fits the people who need it.</strong> Not watered down for mass appeal. Not bloated for enterprise margins. Tools that respect how someone actually works — built lean, built deep, and built to last.
+      <br><br>
+      Being veteran-owned isn't a marketing angle. It shapes how we operate: ship what you say you'll ship, build things that hold up under pressure, and stand behind your work.
+    </div>
+
+    <div class="sdvosb-block">
+      <div class="sdvosb-title">Service-Disabled Veteran-Owned Small Business</div>
+      <div class="sdvosb-text">GIL is an SDVOSB-pending LLC — the certification is in process and we carry that designation with the same accountability it demands. It means we're building for communities that require reliability, and we take that seriously across everything we ship.</div>
+    </div>
+  </div>
+
+  <div class="who-right">
+    <div class="who-stack">
+      <div class="who-item">
+        <div class="wi-icon">◈</div>
+        <div class="wi-body">
+          <div class="wi-title">Mobile & Cross-Platform Apps</div>
+          <div class="wi-text">React Native and Flutter applications built for iOS, Android, and macOS — with offline-first architecture, real data models, and UX designed for the actual use case, not a demo.</div>
+        </div>
+      </div>
+      <div class="who-item">
+        <div class="wi-icon">⬡</div>
+        <div class="wi-body">
+          <div class="wi-title">AI-Native Product Design</div>
+          <div class="wi-text">We embed AI at the architecture layer — not as a feature. Every product is designed around what AI makes possible: smarter defaults, ambient assistance, and workflows that adapt to the person using them.</div>
+        </div>
+      </div>
+      <div class="who-item">
+        <div class="wi-icon">▣</div>
+        <div class="wi-body">
+          <div class="wi-title">Niche & Underserved Markets</div>
+          <div class="wi-text">Veterans. Crafters. Yacht chefs. HOA boards. Community organizers. We build for communities that are ignored by mainstream software — because that's exactly where the real need lives.</div>
+        </div>
+      </div>
+      <div class="who-item">
+        <div class="wi-icon">○</div>
+        <div class="wi-body">
+          <div class="wi-title">SaaS & Subscription Products</div>
+          <div class="wi-text">From solo-operator utilities to multi-tenant B2B platforms, we ship subscription software with real pricing, real tiers, and sustainable economics — not VC-subsidized free tiers that disappear.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ─── CONTACT ────────────────────────────────────────────────── -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="section-label" style="justify-content:center;">Early Access</div>
+    <h2 class="contact-heading">
+      Get notified<br>when products <em>launch.</em>
+    </h2>
+    <p class="contact-sub">
+      We're opening early access programs across multiple products. Drop your email and we'll reach out when something is ready for you.
+    </p>
+    <form action="mailto:ops@gil.consulting" method="POST" enctype="text/plain">
+      <div class="form-row">
+        <input class="form-input" type="email" name="email" placeholder="your@email.com" required>
+        <button class="form-submit" type="submit">Request Access</button>
+      </div>
+      <div class="form-note">No spam. No newsletters. Just launch notifications.</div>
+    </form>
+  </div>
+</section>
+
+<!-- ─── FOOTER ────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-left">
+    <div class="footer-logo"><span>GIL</span> · Global Intelligence Laboratory</div>
+    <div class="footer-copy">© 2026 Global Intelligence Laboratory LLC · SDVOSB</div>
+  </div>
+  <div class="footer-right">
+    <a href="/cdn-cgi/l/email-protection#2b4844455f4a485f6b4c424705484445585e475f42454c"><span class="__cf_email__" data-cfemail="aac9c5c4decbc9deeacdc3c684c9c5c4d9dfc6dec3c4cd">[email&#160;protected]

@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLEARANCE — Compliance Readiness & Security Audit Consulting</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --navy: #0B1120;
+    --navy-light: #111827;
+    --navy-mid: #1F2937;
+    --slate: #374151;
+    --slate-light: #6B7280;
+    --border: #E5E7EB;
+    --border-light: #F3F4F6;
+    --white: #FFFFFF;
+    --off-white: #F9FAFB;
+    --blue: #1D4ED8;
+    --blue-light: #DBEAFE;
+    --blue-bright: #3B82F6;
+    --blue-dark: #1E3A8A;
+    --gold: #B8860B;
+    --gold-light: #FEF9C3;
+    --green: #059669;
+    --green-light: #D1FAE5;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Figtree', sans-serif;
+    color: var(--navy);
+    background: var(--white);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 1rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Figtree', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--navy);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .nav-logo span { color: var(--blue); }
+
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a {
+    color: var(--slate-light);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--navy); }
+
+  /* ── Buttons ── */
+  .btn-blue {
+    background: var(--blue);
+    color: white;
+    border: none;
+    padding: 0.85rem 2rem;
+    font-family: 'Figtree', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .btn-blue:hover { background: var(--blue-dark); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(29, 78, 216, 0.2); }
+
+  .btn-outline-blue {
+    background: transparent;
+    color: var(--blue);
+    border: 1.5px solid var(--blue);
+    padding: 0.85rem 2rem;
+    font-family: 'Figtree', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .btn-outline-blue:hover { background: var(--blue-light); }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 7rem 3rem 4rem;
+    background: linear-gradient(170deg, var(--off-white) 0%, var(--white) 40%, var(--blue-light) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: -200px; right: -200px;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(29, 78, 216, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-text { animation: fadeUp 0.8s ease both; }
+
+  .hero-trust-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    align-items: center;
+  }
+
+  .trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--slate-light);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .trust-badge .check {
+    width: 18px;
+    height: 18px;
+    background: var(--green-light);
+    color: var(--green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+  }
+
+  .hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 3.6rem;
+    line-height: 1.1;
+    color: var(--navy);
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+  }
+
+  .hero h1 strong {
+    color: var(--blue);
+    font-weight: 400;
+  }
+
+  .hero p {
+    font-size: 1.15rem;
+    color: var(--slate-light);
+    max-width: 480px;
+    margin-bottom: 2.5rem;
+    font-weight: 400;
+    line-height: 1.8;
+  }
+
+  .hero-actions { display: flex; gap: 1rem; }
+
+  /* ── Frameworks visual ── */
+  .hero-visual {
+    animation: fadeUp 0.8s ease 0.2s both;
+  }
+
+  .frameworks-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 60px rgba(11, 17, 32, 0.06);
+  }
+
+  .frameworks-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--slate-light);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .framework-list { display: flex; flex-direction: column; gap: 0.8rem; }
+
+  .framework-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.85rem 1.1rem;
+    border-radius: 10px;
+    background: var(--off-white);
+    border: 1px solid var(--border-light);
+    transition: all 0.2s;
+  }
+
+  .framework-item:hover { border-color: var(--blue-light); background: var(--blue-light); }
+
+  .fw-name {
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--navy);
+  }
+
+  .fw-tag {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.25rem 0.7rem;
+    border-radius: 100px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .tag-ready { background: var(--green-light); color: var(--green); }
+  .tag-assess { background: var(--gold-light); color: var(--gold); }
+  .tag-plan { background: var(--blue-light); color: var(--blue); }
+
+  .frameworks-footer {
+    margin-top: 1.5rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .ff-label {
+    font-size: 0.82rem;
+    color: var(--slate-light);
+    font-weight: 500;
+  }
+
+  .ff-value {
+    font-size: 0.82rem;
+    color: var(--green);
+    font-weight: 700;
+  }
+
+  /* ── Sections ── */
+  section { padding: 6rem 3rem; }
+
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+
+  .section-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--blue);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 2.5rem;
+    color: var(--navy);
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  .section-subtitle {
+    font-size: 1.05rem;
+    color: var(--slate-light);
+    max-width: 540px;
+    font-weight: 400;
+    line-height: 1.8;
+  }
+
+  /* ── Services ── */
+  .services-section { background: var(--off-white); }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 3.5rem;
+  }
+
+  .service-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2.5rem 2rem;
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  .service-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(11, 17, 32, 0.06);
+    border-color: var(--blue-light);
+  }
+
+  .service-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--blue-light);
+    color: var(--blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+
+  .service-card h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 0.6rem;
+  }
+
+  .service-card p {
+    font-size: 0.9rem;
+    color: var(--slate-light);
+    line-height: 1.7;
+    font-weight: 400;
+  }
+
+  .service-frameworks {
+    margin-top: 1.2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .sf-tag {
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    background: var(--off-white);
+    color: var(--slate-light);
+    border: 1px solid var(--border-light);
+    letter-spacing: 0.03em;
+  }
+
+  /* ── Process ── */
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    margin-top: 3.5rem;
+  }
+
+  .process-step {
+    text-align: center;
+    position: relative;
+  }
+
+  .process-step::after {
+    content: '→';
+    position: absolute;
+    right: -1.2rem;
+    top: 2rem;
+    color: var(--border);
+    font-size: 1.5rem;
+  }
+
+  .process-step:last-child::after { display: none; }
+
+  .process-num {
+    width: 44px;
+    height: 44px;
+    margin: 0 auto 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--blue);
+    color: white;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .process-step h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 0.4rem;
+  }
+
+  .process-step p {
+    font-size: 0.85rem;
+    color: var(--slate-light);
+    line-height: 1.6;
+  }
+
+  /* ── Who We Help ── */
+  .audience-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-top: 3.5rem;
+  }
+
+  .audience-card {
+    padding: 2.5rem;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--white);
+    transition: all 0.3s;
+  }
+
+  .audience-card:hover { border-color: var(--blue-light); }
+
+  .audience-card h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.3rem;
+    color: var(--navy);
+    margin-bottom: 0.5rem;
+    font-weight: 400;
+  }
+
+  .audience-card p {
+    font-size: 0.9rem;
+    color: var(--slate-light);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+
+  .audience-card ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .audience-card li {
+    font-size: 0.88rem;
+    color: var(--slate);
+    padding-left: 1.2rem;
+    position: relative;
+  }
+
+  .audience-card li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--green);
+    font-weight: 700;
+    font-size: 0.8rem;
+  }
+
+  /* ── CTA ── */
+  .cta-section {
+    background: var(--navy);
+    padding: 6rem 3rem;
+    text-align: center;
+  }
+
+  .cta-section .section-eyebrow { color: var(--blue-bright); }
+
+  .cta-section .section-title {
+    color: var(--white);
+    max-width: 600px;
+    margin: 0 auto 1rem;
+  }
+
+  .cta-section .section-subtitle {
+    color: var(--slate-light);
+    margin: 0 auto 3rem;
+    text-align: center;
+  }
+
+  .waitlist-form {
+    display: flex;
+    gap: 0.75rem;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .waitlist-form input {
+    flex: 1;
+    padding: 1rem 1.25rem;
+    border: 1.5px solid var(--navy-mid);
+    background: var(--navy-light);
+    color: var(--white);
+    border-radius: 8px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 0.92rem;
+    transition: border-color 0.2s;
+  }
+
+  .waitlist-form input::placeholder { color: var(--slate); }
+  .waitlist-form input:focus { outline: none; border-color: var(--blue-bright); }
+
+  .waitlist-note {
+    font-size: 0.78rem;
+    color: var(--slate);
+    margin-top: 1rem;
+  }
+
+  .success-msg {
+    display: none;
+    color: var(--green);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+  }
+
+  /* ── Footer ── */
+  footer {
+    padding: 2.5rem 3rem;
+    text-align: center;
+    color: var(--slate);
+    font-size: 0.8rem;
+    background: var(--navy);
+    border-top: 1px solid var(--navy-mid);
+  }
+
+  footer a { color: var(--blue-bright); text-decoration: none; }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(25px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links a:not(:last-child) { display: none; }
+    .hero { padding: 7rem 1.5rem 3rem; }
+    .hero-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .hero h1 { font-size: 2.5rem; }
+    .services-grid { grid-template-columns: 1fr; }
+    .process-steps { grid-template-columns: 1fr 1fr; }
+    .process-step::after { display: none; }
+    .audience-grid { grid-template-columns: 1fr; }
+    section { padding: 4rem 1.5rem; }
+    .waitlist-form { flex-direction: column; }
+    .hero-trust-row { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a href="#" class="nav-logo">CLEAR<span>ANCE</span></a>
+  <div class="nav-links">
+    <a href="#services">Services</a>
+    <a href="#process">Process</a>
+    <a href="#who">Industries</a>
+    <a href="#contact"><button class="btn-blue" style="padding: 0.6rem 1.5rem; font-size: 0.85rem;">Schedule Consultation</button></a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-trust-row">
+        <div class="trust-badge"><span class="check">✓</span> NIST 800-171</div>
+        <div class="trust-badge"><span class="check">✓</span> HIPAA</div>
+        <div class="trust-badge"><span class="check">✓</span> SOC 2</div>
+        <div class="trust-badge"><span class="check">✓</span> CMMC</div>
+      </div>
+      <h1>Compliance readiness without the <strong>enterprise price tag</strong></h1>
+      <p>CLEARANCE helps small and mid-size businesses prepare for security audits, achieve compliance certifications, and sleep soundly before the assessor arrives.</p>
+      <div class="hero-actions">
+        <a href="#contact"><button class="btn-blue">Schedule Free Consultation</button></a>
+        <a href="#services"><button class="btn-outline-blue">View Services</button></a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="frameworks-card">
+        <div class="frameworks-title">Compliance Dashboard</div>
+        <div class="framework-list">
+          <div class="framework-item">
+            <span class="fw-name">HIPAA Security Rule</span>
+            <span class="fw-tag tag-ready">Audit Ready</span>
+          </div>
+          <div class="framework-item">
+            <span class="fw-name">NIST 800-171 Rev 3</span>
+            <span class="fw-tag tag-ready">Audit Ready</span>
+          </div>
+          <div class="framework-item">
+            <span class="fw-name">SOC 2 Type II</span>
+            <span class="fw-tag tag-assess">Assessing</span>
+          </div>
+          <div class="framework-item">
+            <span class="fw-name">CMMC Level 2</span>
+            <span class="fw-tag tag-plan">Planning</span>
+          </div>
+          <div class="framework-item">
+            <span class="fw-name">FTC Safeguards Rule</span>
+            <span class="fw-tag tag-ready">Audit Ready</span>
+          </div>
+        </div>
+        <div class="frameworks-footer">
+          <span class="ff-label">Overall readiness</span>
+          <span class="ff-value">3 of 5 frameworks ready</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Services -->
+<section class="services-section" id="services">
+  <div class="section-inner">
+    <div class="section-eyebrow">Services</div>
+    <div class="section-title">What we help you with</div>
+    <div class="section-subtitle">From gap assessment to audit day preparation, we handle the compliance workload so your team can focus on the business.</div>
+
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon">◈</div>
+        <h3>Gap Assessment</h3>
+        <p>We evaluate your current security posture against your target framework, identify every gap, and deliver a prioritized remediation roadmap.</p>
+        <div class="service-frameworks">
+          <span class="sf-tag">NIST</span>
+          <span class="sf-tag">HIPAA</span>
+          <span class="sf-tag">SOC 2</span>
+          <span class="sf-tag">CMMC</span>
+          <span class="sf-tag">PCI-DSS</span>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">◇</div>
+        <h3>Documentation Package</h3>
+        <p>Policies, procedures, risk assessments, and evidence binders — the paperwork that makes or breaks your audit, written and organized for you.</p>
+        <div class="service-frameworks">
+          <span class="sf-tag">SSP</span>
+          <span class="sf-tag">POA&M</span>
+          <span class="sf-tag">Risk Register</span>
+          <span class="sf-tag">Policies</span>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">⬢</div>
+        <h3>Technical Security Audit</h3>
+        <p>Real security testing of your infrastructure, applications, and cloud environment. Not just a checklist — actual vulnerability assessment with proof of findings.</p>
+        <div class="service-frameworks">
+          <span class="sf-tag">Vulnerability Scan</span>
+          <span class="sf-tag">Config Review</span>
+          <span class="sf-tag">Cloud Audit</span>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">⬡</div>
+        <h3>Remediation Support</h3>
+        <p>We don't just find problems — we help fix them. Implementation guidance, configuration changes, and architecture recommendations.</p>
+        <div class="service-frameworks">
+          <span class="sf-tag">Hands-on</span>
+          <span class="sf-tag">Implementation</span>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">□</div>
+        <h3>Audit Preparation</h3>
+        <p>Mock audits, evidence collection, and assessor preparation. Walk into your real audit confident and ready, not hoping for the best.</p>
+        <div class="service-frameworks">
+          <span class="sf-tag">Mock Audit</span>
+          <span class="sf-tag">Evidence Prep</span>
+          <span class="sf-tag">Readiness Review</span>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">△</div>
+        <h3>Incident Response</h3>
+        <p>Breach happened? Malware on the network? We triage, contain, investigate, and get you back to business with a full report for stakeholders.</p>
+        <div class="service-frameworks">
+          <span class="sf-tag">Triage</span>
+          <span class="sf-tag">Forensics</span>
+          <span class="sf-tag">Recovery</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Process -->
+<section id="process">
+  <div class="section-inner">
+    <div class="section-eyebrow">Process</div>
+    <div class="section-title">How an engagement works</div>
+    <div class="section-subtitle">Straightforward, no surprises. You know exactly what's happening at every step.</div>
+
+    <div class="process-steps">
+      <div class="process-step">
+        <div class="process-num">1</div>
+        <h4>Discovery Call</h4>
+        <p>Free 30-minute consultation. We learn your business, your target framework, and your timeline.</p>
+      </div>
+      <div class="process-step">
+        <div class="process-num">2</div>
+        <h4>Assessment</h4>
+        <p>Gap analysis against your framework. You receive a clear report showing where you stand and what needs work.</p>
+      </div>
+      <div class="process-step">
+        <div class="process-num">3</div>
+        <h4>Remediation</h4>
+        <p>We build your documentation, fix technical gaps, and implement controls. You review and approve.</p>
+      </div>
+      <div class="process-step">
+        <div class="process-num">4</div>
+        <h4>Audit Ready</h4>
+        <p>Mock audit, evidence review, final polish. You walk into your assessment prepared and confident.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Who We Help -->
+<section class="services-section" id="who">
+  <div class="section-inner">
+    <div class="section-eyebrow">Industries</div>
+    <div class="section-title">Built for businesses like yours</div>
+    <div class="section-subtitle">We specialize in small to mid-size organizations that need enterprise-grade compliance without the enterprise budget.</div>
+
+    <div class="audience-grid">
+      <div class="audience-card">
+        <h3>Healthcare & Dental Practices</h3>
+        <p>HIPAA compliance is mandatory, not optional. We get your practice audit-ready without disrupting patient care.</p>
+        <ul>
+          <li>HIPAA Security Rule gap assessment</li>
+          <li>Risk analysis documentation (required annually)</li>
+          <li>Business Associate Agreement review</li>
+          <li>Staff training and policy development</li>
+        </ul>
+      </div>
+      <div class="audience-card">
+        <h3>Government Contractors</h3>
+        <p>CMMC and NIST 800-171 compliance is now required to bid on DoD contracts. We get you certified.</p>
+        <ul>
+          <li>NIST 800-171 self-assessment scoring</li>
+          <li>CMMC Level 2 preparation</li>
+          <li>System Security Plan (SSP) development</li>
+          <li>POA&M tracking and remediation</li>
+        </ul>
+      </div>
+      <div class="audience-card">
+        <h3>SaaS & Tech Startups</h3>
+        <p>Enterprise customers want SOC 2 before they sign. We get you there fast so deals don't stall.</p>
+        <ul>
+          <li>SOC 2 Type I and Type II readiness</li>
+          <li>Cloud security review (AWS, GCP, Azure)</li>
+          <li>Application security assessment</li>
+          <li>Vendor security questionnaire support</li>
+        </ul>
+      </div>
+      <div class="audience-card">
+        <h3>Auto Dealers & Financial Services</h3>
+        <p>FTC Safeguards Rule compliance is now enforced. Fines are real. We make sure you're covered.</p>
+        <ul>
+          <li>FTC Safeguards Rule compliance program</li>
+          <li>PCI-DSS assessment for payment processing</li>
+          <li>Information security program development</li>
+          <li>Qualified Individual designation support</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <div class="section-inner">
+    <div class="section-eyebrow">Get Started</div>
+    <div class="section-title">Your first consultation is free</div>
+    <div class="section-subtitle">Tell us what you're facing. We'll tell you exactly what it takes to get compliant — no obligation, no sales pressure.</div>
+
+    <div class="waitlist-form" id="waitlistForm">
+      <input type="email" id="emailInput" placeholder="Your business email" required />
+      <button class="btn-blue" onclick="handleSignup()">Request Consultation</button>
+    </div>
+    <div class="waitlist-note">Free 30-minute discovery call. We'll reach out within one business day.</div>
+    <div class="success-msg" id="successMsg">✓ Request received. We'll be in touch within one business day.</div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>CLEARANCE is a service of [Your LLC] &nbsp;·&nbsp; <a href="#">Privacy Policy</a> &nbsp;·&nbsp; <a href="#">Terms of Service</a></p>
+  <p style="margin-top: 0.4rem;">Compliance readiness for businesses that can't afford to fail an audit.</p>
+</footer>
+
+<script>
+function handleSignup() {
+  const email = document.getElementById('emailInput').value;
+  if (email && email.includes('@')) {
+    document.getElementById('waitlistForm').style.display = 'none';
+    document.querySelector('.waitlist-note').style.display = 'none';
+    document.getElementById('successMsg').style.display = 'block';
+    console.log('Clearance consultation:', email);
+  }
+}
+
+document.getElementById('emailInput').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') handleSignup();
+});
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.service-card, .process-step, .audience-card').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'all 0.6s ease';
+  observer.observe(el);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRACTURE — Security Audits for AI-Built Apps</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #07080C;
+    --bg2: #0D0F16;
+    --bg3: #13161F;
+    --surface: #181C28;
+    --border: #1E2333;
+    --border-hover: #2A3045;
+    --text: #E8ECF4;
+    --text-dim: #6B7394;
+    --text-muted: #454D6B;
+    --red: #FF2D55;
+    --red-glow: rgba(255, 45, 85, 0.15);
+    --red-dark: #CC2444;
+    --cyan: #00E5FF;
+    --amber: #FFB800;
+    --green: #00D26A;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── Scanline overlay ── */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0,0,0,0) 0px,
+      rgba(0,0,0,0) 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── Grid background ── */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      linear-gradient(rgba(30, 35, 51, 0.3) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(30, 35, 51, 0.3) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Everything relative to sit above grid ── */
+  nav, section, footer { position: relative; z-index: 1; }
+
+  /* ── Nav ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 1rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    background: rgba(7, 8, 12, 0.9);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--red);
+    text-decoration: none;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .nav-logo span { color: var(--text-dim); font-weight: 400; }
+
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: color 0.2s;
+    letter-spacing: 0.04em;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* ── Buttons ── */
+  .btn-red {
+    background: var(--red);
+    color: white;
+    border: none;
+    padding: 0.85rem 2rem;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.03em;
+    position: relative;
+  }
+  .btn-red:hover {
+    background: var(--red-dark);
+    box-shadow: 0 0 30px var(--red-glow), 0 0 60px rgba(255, 45, 85, 0.08);
+    transform: translateY(-1px);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    padding: 0.85rem 2rem;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .btn-ghost:hover { border-color: var(--red); color: var(--red); }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8rem 3rem 4rem;
+    text-align: center;
+    position: relative;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--red-glow) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    max-width: 800px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 2.5rem;
+    text-transform: uppercase;
+  }
+
+  .hero-badge .dot {
+    width: 6px;
+    height: 6px;
+    background: var(--red);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  .hero h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 4.5rem;
+    font-weight: 700;
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.04em;
+  }
+
+  .hero h1 .highlight {
+    background: linear-gradient(135deg, var(--red), #FF6B8A);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    font-size: 1.2rem;
+    color: var(--text-dim);
+    max-width: 560px;
+    margin: 0 auto 3rem;
+    font-weight: 300;
+    line-height: 1.8;
+  }
+
+  .hero-actions { display: flex; gap: 1rem; justify-content: center; }
+
+  .hero-stats {
+    display: flex;
+    gap: 3rem;
+    justify-content: center;
+    margin-top: 5rem;
+    padding-top: 3rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: 'Space Mono', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--red);
+  }
+
+  .stat-label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+
+  /* ── Terminal demo ── */
+  .terminal-section {
+    padding: 6rem 3rem;
+  }
+
+  .terminal-section .section-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--red);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    letter-spacing: -0.03em;
+  }
+
+  .section-subtitle {
+    font-size: 1.05rem;
+    color: var(--text-dim);
+    max-width: 520px;
+    font-weight: 300;
+    line-height: 1.8;
+    margin-bottom: 3rem;
+  }
+
+  .terminal {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 80px rgba(0,0,0,0.4);
+  }
+
+  .terminal-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.2rem;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .terminal-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .terminal-dot.r { background: #FF5F57; }
+  .terminal-dot.y { background: #FEBC2E; }
+  .terminal-dot.g { background: #28C840; }
+
+  .terminal-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-left: 0.5rem;
+    letter-spacing: 0.05em;
+  }
+
+  .terminal-body {
+    padding: 1.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 2;
+  }
+
+  .t-prompt { color: var(--red); }
+  .t-cmd { color: var(--text); }
+  .t-flag { color: var(--cyan); }
+  .t-url { color: var(--amber); }
+  .t-output { color: var(--text-dim); }
+  .t-critical { color: var(--red); font-weight: 700; }
+  .t-high { color: var(--amber); }
+  .t-medium { color: #FFD60A; }
+  .t-info { color: var(--cyan); }
+  .t-ok { color: var(--green); }
+  .t-dim { color: var(--text-muted); }
+
+  /* ── What We Find ── */
+  .vulns-section { padding: 6rem 3rem; }
+
+  .vulns-section .section-inner { max-width: 1100px; margin: 0 auto; }
+
+  .vulns-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .vuln-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .vuln-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+
+  .vuln-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .vuln-card.critical::before { background: var(--red); }
+  .vuln-card.high::before { background: var(--amber); }
+  .vuln-card.medium::before { background: #FFD60A; }
+
+  .vuln-severity {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+  }
+
+  .vuln-card.critical .vuln-severity { color: var(--red); }
+  .vuln-card.high .vuln-severity { color: var(--amber); }
+  .vuln-card.medium .vuln-severity { color: #FFD60A; }
+
+  .vuln-card h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+    color: var(--text);
+  }
+
+  .vuln-card p {
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* ── Pricing / Tiers ── */
+  .tiers-section {
+    padding: 6rem 3rem;
+    background: var(--bg2);
+  }
+
+  .tiers-section .section-inner { max-width: 1000px; margin: 0 auto; }
+
+  .tiers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .tier {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2.5rem 2rem;
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  .tier:hover { border-color: var(--border-hover); }
+
+  .tier.featured {
+    border-color: var(--red);
+    box-shadow: 0 0 40px var(--red-glow);
+  }
+
+  .tier-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .tier.featured .tier-name { color: var(--red); }
+
+  .tier-price {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+
+  .tier-desc {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 2rem;
+    font-weight: 300;
+  }
+
+  .tier ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    margin-bottom: 2rem;
+  }
+
+  .tier li {
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    padding-left: 1.4rem;
+    position: relative;
+  }
+
+  .tier li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--text-muted);
+  }
+
+  .tier.featured li::before { color: var(--red); }
+
+  .tier button { width: 100%; }
+
+  /* ── CTA / Waitlist ── */
+  .cta-section {
+    padding: 6rem 3rem;
+    text-align: center;
+    position: relative;
+  }
+
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, var(--red-glow) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cta-section .section-inner {
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  .waitlist-form {
+    display: flex;
+    gap: 0.75rem;
+    max-width: 480px;
+    margin: 2.5rem auto 0;
+  }
+
+  .waitlist-form input {
+    flex: 1;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--text);
+    border-radius: 8px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+  }
+
+  .waitlist-form input::placeholder { color: var(--text-muted); }
+  .waitlist-form input:focus { outline: none; border-color: var(--red); }
+
+  .waitlist-note {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.8rem;
+  }
+
+  .success-msg {
+    display: none;
+    color: var(--green);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.9rem;
+    margin-top: 1.5rem;
+  }
+
+  /* ── Footer ── */
+  footer {
+    padding: 2.5rem 3rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    border-top: 1px solid var(--border);
+  }
+
+  footer a { color: var(--red); text-decoration: none; }
+
+  /* ── Animations ── */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  @keyframes typeIn {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links a:not(:last-child) { display: none; }
+    .hero { padding: 7rem 1.5rem 3rem; }
+    .hero h1 { font-size: 2.8rem; }
+    .hero-stats { flex-direction: column; gap: 1.5rem; }
+    .vulns-grid { grid-template-columns: 1fr; }
+    .tiers-grid { grid-template-columns: 1fr; }
+    .terminal-section, .vulns-section, .tiers-section, .cta-section { padding: 4rem 1.5rem; }
+    .waitlist-form { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a href="#" class="nav-logo">FRACTURE<span>.sec</span></a>
+  <div class="nav-links">
+    <a href="#vulns">What We Find</a>
+    <a href="#tiers">Pricing</a>
+    <a href="#waitlist"><button class="btn-red" style="padding: 0.6rem 1.5rem; font-size: 0.85rem;">Get Scanned</button></a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Accepting Early Clients
+    </div>
+    <h1>Your AI built the app.<br><span class="highlight">We break it.</span></h1>
+    <p>You shipped in a weekend with Cursor, Lovable, or Bolt. We find the security holes your AI assistant left behind — before someone else does.</p>
+    <div class="hero-actions">
+      <a href="#waitlist"><button class="btn-red">Get Your Free Scan</button></a>
+      <a href="#vulns"><button class="btn-ghost">See What We Find</button></a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-value">4 of 5</div>
+        <div class="stat-label">Vibe-coded apps have critical vulns</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">17</div>
+        <div class="stat-label">Security tools in our arsenal</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">&lt; 24hr</div>
+        <div class="stat-label">Report turnaround</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Terminal -->
+<section class="terminal-section">
+  <div class="section-inner">
+    <div class="section-label">// Live Demo</div>
+    <div class="section-title">This is what we do to your app</div>
+    <div class="section-subtitle">Real tools. Real findings. Not a checklist — an actual security assessment.</div>
+
+    <div class="terminal">
+      <div class="terminal-header">
+        <div class="terminal-dot r"></div>
+        <div class="terminal-dot y"></div>
+        <div class="terminal-dot g"></div>
+        <span class="terminal-title">fracture — scan session</span>
+      </div>
+      <div class="terminal-body">
+        <span class="t-prompt">❯ </span><span class="t-cmd">fracture scan </span><span class="t-flag">--deep </span><span class="t-url">https://my-vibe-app.vercel.app</span><br>
+        <br>
+        <span class="t-dim">[recon]</span> <span class="t-output">Discovering endpoints...</span> <span class="t-ok">found 34 routes</span><br>
+        <span class="t-dim">[recon]</span> <span class="t-output">Scanning JS bundles for secrets...</span> <span class="t-critical">⚠ 2 API keys exposed</span><br>
+        <span class="t-dim">[auth]</span> <span class="t-output">Testing authentication flows...</span> <span class="t-critical">⚠ JWT never expires</span><br>
+        <span class="t-dim">[auth]</span> <span class="t-output">Testing IDOR on /api/users/:id...</span> <span class="t-critical">⚠ Any user can read any profile</span><br>
+        <span class="t-dim">[inject]</span> <span class="t-output">Testing SQL injection vectors...</span> <span class="t-high">⚠ 1 injectable parameter</span><br>
+        <span class="t-dim">[inject]</span> <span class="t-output">Testing XSS on input fields...</span> <span class="t-high">⚠ 3 reflected XSS</span><br>
+        <span class="t-dim">[config]</span> <span class="t-output">Checking security headers...</span> <span class="t-medium">⚠ Missing CSP, HSTS</span><br>
+        <span class="t-dim">[config]</span> <span class="t-output">Checking Supabase RLS policies...</span> <span class="t-critical">⚠ 4 tables have no RLS</span><br>
+        <span class="t-dim">[cloud]</span> <span class="t-output">Testing exposed admin routes...</span> <span class="t-critical">⚠ /admin accessible without auth</span><br>
+        <br>
+        <span class="t-dim">──────────────────────────────────────────</span><br>
+        <span class="t-critical">  5 CRITICAL</span> &nbsp; <span class="t-high">2 HIGH</span> &nbsp; <span class="t-medium">1 MEDIUM</span> &nbsp; <span class="t-info">34 routes tested</span><br>
+        <span class="t-dim">──────────────────────────────────────────</span><br>
+        <span class="t-ok">✓ Report generated → fracture-report-2026-03-03.pdf</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- What We Find -->
+<section class="vulns-section" id="vulns">
+  <div class="section-inner">
+    <div class="section-label">// Common Fractures</div>
+    <div class="section-title">What AI leaves behind</div>
+    <div class="section-subtitle">These aren't theoretical. We find these in almost every AI-generated app we scan.</div>
+
+    <div class="vulns-grid">
+      <div class="vuln-card critical">
+        <div class="vuln-severity">Critical</div>
+        <h3>Exposed API Keys</h3>
+        <p>Stripe, Supabase, OpenAI keys hardcoded in frontend JavaScript bundles. One View Source away from theft.</p>
+      </div>
+      <div class="vuln-card critical">
+        <div class="vuln-severity">Critical</div>
+        <h3>No Row Level Security</h3>
+        <p>Supabase tables wide open. Any authenticated user can read, modify, or delete every other user's data.</p>
+      </div>
+      <div class="vuln-card critical">
+        <div class="vuln-severity">Critical</div>
+        <h3>Broken Authentication</h3>
+        <p>JWTs that never expire, password resets with no rate limiting, admin routes with no auth check.</p>
+      </div>
+      <div class="vuln-card high">
+        <div class="vuln-severity">High</div>
+        <h3>SQL / NoSQL Injection</h3>
+        <p>AI generates queries by concatenating user input. Classic injection vectors that automated tools catch instantly.</p>
+      </div>
+      <div class="vuln-card high">
+        <div class="vuln-severity">High</div>
+        <h3>Cross-Site Scripting</h3>
+        <p>User input rendered without sanitization. Stored XSS in comments, profiles, and anywhere users type.</p>
+      </div>
+      <div class="vuln-card medium">
+        <div class="vuln-severity">Medium</div>
+        <h3>Missing Security Headers</h3>
+        <p>No CSP, no HSTS, no X-Frame-Options. The basics that every production app needs but AI never adds.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Tiers -->
+<section class="tiers-section" id="tiers">
+  <div class="section-inner">
+    <div class="section-label">// Service Tiers</div>
+    <div class="section-title">Pick your depth</div>
+    <div class="section-subtitle">From quick scan to full penetration test. We fix what we find — or teach you how.</div>
+
+    <div class="tiers-grid">
+      <div class="tier">
+        <div class="tier-name">Quick Scan</div>
+        <div class="tier-price">Free</div>
+        <div class="tier-desc">Automated surface scan of your deployed app.</div>
+        <ul>
+          <li>Automated vulnerability scan</li>
+          <li>Exposed secrets detection</li>
+          <li>Security headers check</li>
+          <li>Summary report with severity ratings</li>
+          <li>24-hour turnaround</li>
+        </ul>
+        <a href="#waitlist"><button class="btn-ghost" style="width:100%">Start Free Scan</button></a>
+      </div>
+      <div class="tier featured">
+        <div class="tier-name">Deep Audit</div>
+        <div class="tier-price">$299</div>
+        <div class="tier-desc">Manual + automated testing by a real human.</div>
+        <ul>
+          <li>Everything in Quick Scan</li>
+          <li>Source code review</li>
+          <li>Authentication flow testing</li>
+          <li>Business logic analysis</li>
+          <li>Detailed report with fix instructions</li>
+          <li>30-min walkthrough call</li>
+        </ul>
+        <a href="#waitlist"><button class="btn-red" style="width:100%">Book Deep Audit</button></a>
+      </div>
+      <div class="tier">
+        <div class="tier-name">Full Pentest</div>
+        <div class="tier-price">$799+</div>
+        <div class="tier-desc">Comprehensive penetration test + remediation.</div>
+        <ul>
+          <li>Everything in Deep Audit</li>
+          <li>Full OWASP Top 10 testing</li>
+          <li>API security assessment</li>
+          <li>Cloud configuration review</li>
+          <li>Remediation implementation</li>
+          <li>Re-test after fixes</li>
+        </ul>
+        <a href="#waitlist"><button class="btn-ghost" style="width:100%">Request Quote</button></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="waitlist">
+  <div class="section-inner">
+    <div class="section-label">// Get Started</div>
+    <div class="section-title">Ship fast. Ship secure.</div>
+    <p style="color: var(--text-dim); font-weight: 300; font-size: 1.05rem; margin-bottom: 0.5rem;">Drop your email for a free scan or to book an audit. We'll reach out within 24 hours.</p>
+
+    <div class="waitlist-form" id="waitlistForm">
+      <input type="email" id="emailInput" placeholder="you@startup.com" required />
+      <button class="btn-red" onclick="handleSignup()">Get Scanned</button>
+    </div>
+    <div class="waitlist-note">Your app URL is safe with us. We only scan with your explicit permission.</div>
+    <div class="success-msg" id="successMsg">⟩ roger that. we'll be in touch within 24hrs.</div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>FRACTURE is a service of [Your LLC] &nbsp;·&nbsp; <a href="#">Privacy</a> &nbsp;·&nbsp; <a href="#">Terms</a></p>
+  <p style="margin-top: 0.4rem;">We find the fractures before they become breaches.</p>
+</footer>
+
+<script>
+function handleSignup() {
+  const email = document.getElementById('emailInput').value;
+  if (email && email.includes('@')) {
+    document.getElementById('waitlistForm').style.display = 'none';
+    document.querySelector('.waitlist-note').style.display = 'none';
+    document.getElementById('successMsg').style.display = 'block';
+    console.log('Fracture signup:', email);
+  }
+}
+
+document.getElementById('emailInput').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') handleSignup();
+});
+
+// Scroll animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.vuln-card, .tier, .terminal, .stat').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'all 0.6s ease';
+  observer.observe(el);
+});
+</script>
+
+</body>
+</html>
